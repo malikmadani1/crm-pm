@@ -15,7 +15,7 @@ class TaskTimerController extends Controller
         $this->authorize('view', $task);
 
         try {
-            $taskTimerService->start($task, $request->user());
+            $taskTimerService->start($task, $request->user(), $request->string('description')->toString());
         } catch (ValidationException $exception) {
             return $this->timerResponse($request, false, $exception->validator->errors()->first());
         }
@@ -28,7 +28,7 @@ class TaskTimerController extends Controller
         $this->authorize('view', $task);
 
         try {
-            $taskTimerService->stop($task, $request->user());
+            $taskTimerService->stop($task, $request->user(), $request->string('description')->toString());
         } catch (ValidationException $exception) {
             return $this->timerResponse($request, false, $exception->validator->errors()->first());
         }

@@ -1,4 +1,4 @@
-@php
+﻿@php
     $isRtl = app()->isLocale('ar');
     $languageSwitchLocale = $isRtl ? 'en' : 'ar';
     $languageSwitchFlagClass = $languageSwitchLocale === 'en' ? 'fi-gb' : 'fi-sy';
@@ -286,3 +286,4 @@
         </div>
     </body>
 </html>
+

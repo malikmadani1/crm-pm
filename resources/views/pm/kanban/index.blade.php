@@ -246,15 +246,18 @@
                     this.$refs.taskPanelBody.querySelectorAll('[data-task-timer-action]').forEach((button) => {
                         button.addEventListener('click', async () => {
                             const url = button.dataset.taskTimerUrl;
+                            const description = button.closest('.task-drawer-section')?.querySelector('[data-task-timer-description]')?.value?.trim() || '';
                             button.disabled = true;
 
                             try {
                                 const response = await fetch(url, {
                                     method: 'POST',
                                     headers: {
+                                        'Content-Type': 'application/json',
                                         'Accept': 'application/json',
                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                     },
+                                    body: JSON.stringify({ description }),
                                 });
 
                                 const payload = await response.json();

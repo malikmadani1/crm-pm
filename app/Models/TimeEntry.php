@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Duration;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,5 +55,21 @@ class TimeEntry extends Model
     public function hours(): float
     {
         return round(($this->minutes ?? 0) / 60, 2);
+    }
+
+    public function durationSeconds(): int
+    {
+        if ($this->started_at === null) {
+            return (int) round((($this->minutes ?? 0) * 60));
+        }
+
+        $endedAt = $this->ended_at ?? now();
+
+        return max(0, $this->started_at->diffInSeconds($endedAt));
+    }
+
+    public function durationLabel(): string
+    {
+        return Duration::fromSeconds($this->durationSeconds());
     }
 }

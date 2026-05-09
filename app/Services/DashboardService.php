@@ -8,6 +8,8 @@ use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\TimeEntry;
+use App\Models\AttendanceRecord;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -30,6 +32,14 @@ class DashboardService
             $baseDeals->where('owner_id', $user->id);
             $baseCustomers->where('owner_id', $user->id);
             $baseLeads->where('owner_id', $user->id);
+        }
+
+        $activeAttendanceQuery = AttendanceRecord::query()->with('user')->whereNull('checked_out_at');
+        $activeTimersQuery = TimeEntry::query()->with(['user', 'task', 'project'])->whereNull('ended_at');
+
+        if (! $user->isAdmin() && ! $user->hasRole('manager')) {
+            $activeAttendanceQuery->where('user_id', $user->id);
+            $activeTimersQuery->where('user_id', $user->id);
         }
 
         return [
@@ -81,8 +91,23 @@ class DashboardService
                     'projects as active_projects_count',
                 ])
                 ->withSum('timeEntries as tracked_minutes_sum', 'minutes')
+                ->withSum('attendanceRecords as attendance_minutes_sum', 'worked_minutes')
                 ->limit(8)
                 ->get(),
+            'active_attendance' => $activeAttendanceQuery
+                ->latest('checked_in_at')
+                ->limit(8)
+                ->get(),
+            'active_task_timers' => $activeTimersQuery
+                ->latest('started_at')
+                ->limit(8)
+                ->get(),
+            'risk_signals' => [
+                'many_in_progress' => Task::query()->whereIn('status', ['in_progress', 'review'])->count(),
+                'completed_today' => Task::query()->where('status', 'done')->whereDate('updated_at', now()->toDateString())->count(),
+                'attendance_minutes_today' => (int) AttendanceRecord::query()->whereDate('work_date', now()->toDateString())->sum('worked_minutes'),
+                'tracked_minutes_today' => (int) TimeEntry::query()->whereDate('started_at', now()->toDateString())->sum('minutes'),
+            ],
         ];
     }
 }

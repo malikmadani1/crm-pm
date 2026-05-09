@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Duration;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,5 +44,21 @@ class AttendanceRecord extends Model
     public function workedHours(): float
     {
         return round(($this->worked_minutes ?? 0) / 60, 2);
+    }
+
+    public function workedSeconds(): int
+    {
+        if ($this->checked_in_at === null) {
+            return (int) round((($this->worked_minutes ?? 0) * 60));
+        }
+
+        $endedAt = $this->checked_out_at ?? now();
+
+        return max(0, $this->checked_in_at->diffInSeconds($endedAt));
+    }
+
+    public function workedDurationLabel(): string
+    {
+        return Duration::fromSeconds($this->workedSeconds());
     }
 }

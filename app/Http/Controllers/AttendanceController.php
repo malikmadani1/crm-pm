@@ -13,26 +13,40 @@ class AttendanceController extends Controller
     {
         abort_unless($request->user()->hasPermissionTo('reports.view'), 403);
 
-        $records = AttendanceRecord::query()
+        $recordsQuery = AttendanceRecord::query()
             ->with('user')
             ->when($request->filled('user_id'), fn ($query) => $query->where('user_id', $request->integer('user_id')))
             ->when($request->filled('from'), fn ($query) => $query->whereDate('work_date', '>=', $request->string('from')))
-            ->when($request->filled('to'), fn ($query) => $query->whereDate('work_date', '<=', $request->string('to')))
+            ->when($request->filled('to'), fn ($query) => $query->whereDate('work_date', '<=', $request->string('to')));
+
+        if (! $request->user()->isAdmin() && ! $request->user()->hasRole('manager')) {
+            $recordsQuery->where('user_id', $request->user()->id);
+        }
+
+        $records = $recordsQuery
             ->latest('work_date')
             ->latest('checked_in_at')
             ->paginate(20)
             ->withQueryString();
 
-        $users = User::query()->active()->orderBy('name')->get(['id', 'name']);
+        $users = (! $request->user()->isAdmin() && ! $request->user()->hasRole('manager'))
+            ? User::query()->whereKey($request->user()->id)->get(['id', 'name'])
+            : User::query()->active()->orderBy('name')->get(['id', 'name']);
+
         $summaryQuery = AttendanceRecord::query()
             ->when($request->filled('user_id'), fn ($query) => $query->where('user_id', $request->integer('user_id')))
             ->when($request->filled('from'), fn ($query) => $query->whereDate('work_date', '>=', $request->string('from')))
             ->when($request->filled('to'), fn ($query) => $query->whereDate('work_date', '<=', $request->string('to')));
 
+        if (! $request->user()->isAdmin() && ! $request->user()->hasRole('manager')) {
+            $summaryQuery->where('user_id', $request->user()->id);
+        }
+
         $summary = [
             'days_count' => (clone $summaryQuery)->count(),
             'open_days_count' => (clone $summaryQuery)->whereNull('checked_out_at')->count(),
             'worked_hours' => round(((clone $summaryQuery)->sum('worked_minutes')) / 60, 1),
+            'worked_duration' => \App\Support\Duration::fromMinutes((clone $summaryQuery)->sum('worked_minutes')),
         ];
 
         return view('attendance.index', compact('records', 'users', 'summary'));

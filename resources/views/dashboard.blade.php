@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <x-page-header title="Executive Dashboard" description="Monitor sales, delivery, deadlines, and team activity from one place.">
             <a href="{{ route('customers.create') }}" class="btn-secondary">{{ __('New Customer') }}</a>
@@ -129,16 +129,75 @@
                         <div class="rounded-2xl bg-white/5 px-4 py-4">
                             <div class="flex items-center justify-between">
                                 <div class="text-sm font-semibold text-white">{{ $member->name }}</div>
-                                <div class="text-xs text-slate-400">{{ round(($member->tracked_minutes_sum ?? 0) / 60, 1) }} ساعة على المهام</div>
+                                <div class="text-xs text-slate-400">{{ \App\Support\Duration::fromMinutes($member->tracked_minutes_sum ?? 0) }} على المهام</div>
                             </div>
                             <div class="mt-3 grid grid-cols-2 gap-3 text-xs text-slate-400">
                                 <div class="rounded-2xl bg-slate-900/50 px-3 py-2">{{ __('Completed') }}: <span class="font-semibold text-white">{{ $member->completed_tasks_count }}</span></div>
-                                <div class="rounded-2xl bg-slate-900/50 px-3 py-2">{{ __('Projects') }}: <span class="font-semibold text-white">{{ $member->active_projects_count }}</span></div>
+                                <div class="rounded-2xl bg-slate-900/50 px-3 py-2">مدة الدوام: <span class="font-semibold text-white">{{ \App\Support\Duration::fromMinutes($member->attendance_minutes_sum ?? 0) }}</span></div>
                             </div>
                         </div>
                     @empty
                         <x-empty-state title="لا توجد بيانات فريق بعد" message="ستظهر هنا بيانات الفريق مع جلسات العمل على المهام والحضور اليومي." />
                     @endforelse
+                </div>
+            </div>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-3">
+            <div class="panel">
+                <h2 class="text-lg font-semibold text-white">الموجودون الآن</h2>
+                <div class="mt-5 space-y-3">
+                    @forelse($active_attendance as $record)
+                        <div class="rounded-2xl bg-white/5 px-4 py-4">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm font-semibold text-white">{{ $record->user?->name }}</div>
+                                <x-status-badge value="على رأس العمل" color="emerald" />
+                            </div>
+                            <div class="mt-1 text-xs text-slate-400">بدأ الدوام {{ $record->checked_in_at?->format('H:i') }}</div>
+                        </div>
+                    @empty
+                        <x-empty-state title="لا يوجد حضور مباشر" message="سيظهر هنا من بدأ الدوام ولم يسجل خروجًا بعد." />
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="text-lg font-semibold text-white">المؤقتات النشطة</h2>
+                <div class="mt-5 space-y-3">
+                    @forelse($active_task_timers as $entry)
+                        <div class="rounded-2xl bg-white/5 px-4 py-4">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm font-semibold text-white">{{ $entry->user?->name }}</div>
+                                <div class="text-xs text-cyan-300">{{ $entry->started_at?->diffForHumans() }}</div>
+                            </div>
+                            <div class="mt-1 text-xs text-slate-400">{{ $entry->task?->title ?: 'بدون مهمة' }}</div>
+                            <div class="mt-1 text-[11px] text-slate-500">{{ $entry->project?->name }}</div>
+                        </div>
+                    @empty
+                        <x-empty-state title="لا توجد مؤقتات تعمل الآن" message="سيظهر هنا من يعمل الآن على مهامه بشكل مباشر." />
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="text-lg font-semibold text-white">إشارات الخطر</h2>
+                <div class="mt-5 space-y-4 text-sm">
+                    <div class="rounded-2xl bg-white/5 px-4 py-4">
+                        <div class="text-slate-400">مهام قيد التنفيذ أو المراجعة</div>
+                        <div class="mt-2 text-2xl font-semibold text-white">{{ $risk_signals['many_in_progress'] }}</div>
+                    </div>
+                    <div class="rounded-2xl bg-white/5 px-4 py-4">
+                        <div class="text-slate-400">مهام أغلقت اليوم</div>
+                        <div class="mt-2 text-2xl font-semibold text-white">{{ $risk_signals['completed_today'] }}</div>
+                    </div>
+                    <div class="rounded-2xl bg-white/5 px-4 py-4">
+                        <div class="text-slate-400">ساعات اليوم: دوام مقابل مهام</div>
+                        <div class="mt-2 text-sm text-white">
+                            دوام: {{ \App\Support\Duration::fromMinutes($risk_signals['attendance_minutes_today']) }}
+                            <br>
+                            مهام: {{ \App\Support\Duration::fromMinutes($risk_signals['tracked_minutes_today']) }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -171,3 +230,5 @@
         });
     </script>
 </x-app-layout>
+
+

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <x-page-header :title="$user->name" description="Profile, responsibilities, workload, and recent activity for this team member.">
             @can('update', $user)
@@ -40,7 +40,7 @@
                     <div class="flex justify-between"><dt class="text-slate-400">{{ __('Phone') }}</dt><dd>{{ $user->phone ?: __('N/A') }}</dd></div>
                     <div class="flex justify-between"><dt class="text-slate-400">{{ __('Roles') }}</dt><dd>{{ collect($user->role_names)->map(fn ($roleName) => __($roleName))->join(', ') ?: __('N/A') }}</dd></div>
                     <div class="flex justify-between"><dt class="text-slate-400">{{ __('Completed Tasks') }}</dt><dd>{{ $user->completed_tasks_count }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-slate-400">{{ __('Tracked Hours') }}</dt><dd>{{ round(($user->timeEntries->sum('minutes')) / 60, 1) }} {{ __('hours') }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">{{ __('Tracked Hours') }}</dt><dd>{{ \App\Support\Duration::fromMinutes($user->timeEntries->sum('minutes')) }}</dd></div>
                 </dl>
             </div>
 
@@ -98,3 +98,4 @@
         </div>
     </div>
 </x-app-layout>
+

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use App\Support\Duration;
 
 class AuditLog extends Model
 {
@@ -302,8 +303,8 @@ class AuditLog extends Model
             'priority' => $this->translatePriority((string) $value),
             'completion_percentage', 'progress', 'probability' => (int) $value.'%',
             'budget', 'value' => number_format((float) $value, 2),
-            'estimated_hours', 'actual_hours' => rtrim(rtrim(number_format((float) $value, 2, '.', ''), '0'), '.').' ساعة',
-            'worked_minutes' => round(((int) $value) / 60, 2).' ساعة',
+            'estimated_hours', 'actual_hours' => Duration::fromHours((float) $value),
+            'worked_minutes' => Duration::fromMinutes((int) $value),
             'start_date', 'due_date', 'expected_close_date' => (string) $value,
             'checked_in_at', 'checked_out_at' => (string) $value,
             'is_active' => (bool) $value ? 'نعم' : 'لا',
@@ -383,3 +384,5 @@ class AuditLog extends Model
         };
     }
 }
+
+

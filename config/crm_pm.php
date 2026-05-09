@@ -10,7 +10,6 @@ return [
         'deals' => ['view', 'create', 'update', 'delete', 'pipeline'],
         'projects' => ['view', 'create', 'update', 'delete'],
         'tasks' => ['view', 'create', 'update', 'delete', 'assign', 'comment', 'move'],
-        'time_entries' => ['view', 'create', 'update', 'delete'],
         'reports' => ['view', 'export'],
         'notifications' => ['view'],
         'audit_logs' => ['view'],

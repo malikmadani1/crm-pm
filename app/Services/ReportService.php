@@ -6,6 +6,8 @@ use App\Models\Customer;
 use App\Models\Deal;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\TimeEntry;
+use App\Models\AttendanceRecord;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -75,12 +77,22 @@ class ReportService
             $query->where('status', $request->string('status'));
         }
 
+        $items = $query->latest()->paginate(15)->withQueryString();
+        $items->getCollection()->loadSum('timeEntries as tracked_minutes_sum', 'minutes');
+
         return [
-            'items' => $query->latest()->paginate(15)->withQueryString(),
+            'items' => $items,
             'summary' => [
                 'done_count' => (clone $query)->where('status', 'done')->count(),
                 'overdue_count' => (clone $query)->whereDate('due_date', '<', now())->where('status', '!=', 'done')->count(),
                 'avg_completion' => round((float) (clone $query)->avg('completion_percentage'), 1),
+                'tracked_hours_total' => round(((clone TimeEntry::query())
+                    ->when($request->filled('project_id'), function ($timeQuery) use ($request) {
+                        $timeQuery->whereHas('task', fn ($taskQuery) => $taskQuery->where('project_id', $request->integer('project_id')));
+                    })
+                    ->when($request->filled('from'), fn ($timeQuery) => $timeQuery->whereDate('started_at', '>=', $request->string('from')))
+                    ->when($request->filled('to'), fn ($timeQuery) => $timeQuery->whereDate('started_at', '<=', $request->string('to')))
+                    ->sum('minutes')) / 60, 1),
             ],
         ];
     }
@@ -95,8 +107,31 @@ class ReportService
             ->withSum('timeEntries as tracked_minutes_sum', 'minutes')
             ->withSum('attendanceRecords as attendance_minutes_sum', 'worked_minutes');
 
+        $items = $query->paginate(15)->withQueryString();
+
+        $summaryAttendance = AttendanceRecord::query();
+        $summaryTracked = TimeEntry::query();
+
+        if ($request->filled('from')) {
+            $summaryAttendance->whereDate('work_date', '>=', $request->string('from'));
+            $summaryTracked->whereDate('started_at', '>=', $request->string('from'));
+        }
+
+        if ($request->filled('to')) {
+            $summaryAttendance->whereDate('work_date', '<=', $request->string('to'));
+            $summaryTracked->whereDate('started_at', '<=', $request->string('to'));
+        }
+
+        $attendanceMinutes = (int) $summaryAttendance->sum('worked_minutes');
+        $trackedMinutes = (int) $summaryTracked->sum('minutes');
+
         return [
-            'items' => $query->paginate(15)->withQueryString(),
+            'items' => $items,
+            'summary' => [
+                'attendance_hours' => round($attendanceMinutes / 60, 1),
+                'tracked_hours' => round($trackedMinutes / 60, 1),
+                'utilization' => $attendanceMinutes > 0 ? round(($trackedMinutes / $attendanceMinutes) * 100, 1) : 0,
+            ],
         ];
     }
 

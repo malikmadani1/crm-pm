@@ -23,7 +23,7 @@ class TaskTimerService
             ->first();
     }
 
-    public function start(Task $task, User $user): TimeEntry
+    public function start(Task $task, User $user, ?string $description = null): TimeEntry
     {
         $activeEntry = $this->activeEntryFor($user);
 
@@ -46,7 +46,7 @@ class TaskTimerService
             'started_at' => now(),
             'minutes' => 0,
             'billable' => false,
-            'description' => __('Timer started from task view.'),
+            'description' => filled($description) ? trim($description) : __('Timer started from task view.'),
         ]);
 
         $this->auditLogService->record(
@@ -74,7 +74,7 @@ class TaskTimerService
         return $entry;
     }
 
-    public function stop(Task $task, User $user): TimeEntry
+    public function stop(Task $task, User $user, ?string $description = null): TimeEntry
     {
         $entry = TimeEntry::query()
             ->where('task_id', $task->id)
@@ -92,6 +92,7 @@ class TaskTimerService
         $entry->update([
             'ended_at' => now(),
             'minutes' => $entry->started_at->diffInMinutes(now()),
+            'description' => filled($description) ? trim($description) : $entry->description,
         ]);
 
         $this->syncTaskActualHours($task);

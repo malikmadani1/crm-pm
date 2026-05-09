@@ -1,4 +1,4 @@
-@php
+﻿@php
     $compact = $compact ?? false;
     $currentUserTimerOnTask = $activeTimer && (int) $activeTimer->task_id === (int) $task->id;
     $anotherTimerRunning = $activeTimer && ! $currentUserTimerOnTask;
@@ -46,11 +46,11 @@
     <div class="mt-4 grid gap-3 {{ $compact ? 'grid-cols-2' : 'md:grid-cols-3' }}">
         <div class="rounded-2xl bg-slate-950/40 px-4 py-3">
             <div class="text-xs text-slate-400">إجمالي وقت المهمة</div>
-            <div class="mt-1 text-lg font-semibold text-white">{{ round($taskTrackedMinutes / 60, 2) }} ساعة</div>
+            <div class="mt-1 text-lg font-semibold text-white">{{ \App\Support\Duration::fromMinutes($taskTrackedMinutes) }}</div>
         </div>
         <div class="rounded-2xl bg-slate-950/40 px-4 py-3">
             <div class="text-xs text-slate-400">وقتك على المهمة</div>
-            <div class="mt-1 text-lg font-semibold text-white">{{ round($taskUserTrackedMinutes / 60, 2) }} ساعة</div>
+            <div class="mt-1 text-lg font-semibold text-white">{{ \App\Support\Duration::fromMinutes($taskUserTrackedMinutes) }}</div>
         </div>
         <div class="rounded-2xl bg-slate-950/40 px-4 py-3 {{ $compact ? 'col-span-2' : '' }}">
             <div class="text-xs text-slate-400">الحالة الحالية</div>
@@ -64,6 +64,16 @@
                 @endif
             </div>
         </div>
+    </div>
+
+    <div class="mt-4">
+        <label class="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">ملاحظة العمل</label>
+        <textarea
+            rows="{{ $compact ? 3 : 4 }}"
+            class="task-timer-note"
+            data-task-timer-description
+            placeholder="اكتب باختصار ما الذي تعمل عليه أو ما الذي أنجزته في هذه الجلسة..."
+        ></textarea>
     </div>
 
     @if($task->timeEntries->isNotEmpty())
@@ -81,12 +91,17 @@
                                 - يعمل الآن
                             @endif
                         </div>
+                        @if($entry->description)
+                            <div class="mt-2 text-xs text-slate-400">{{ $entry->description }}</div>
+                        @endif
                     </div>
                     <div class="text-sm font-semibold text-cyan-300">
-                        {{ $entry->ended_at ? round($entry->minutes / 60, 2).' ساعة' : 'قيد التشغيل' }}
+                        {{ $entry->ended_at ? $entry->durationLabel() : 'قيد التشغيل' }}
                     </div>
                 </div>
             @endforeach
         </div>
     @endif
 </div>
+
+

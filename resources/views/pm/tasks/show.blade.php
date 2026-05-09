@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <x-page-header :title="$task->title" :description="$task->project?->name ?: 'تفاصيل المهمة وسجل العمل عليها'">
             @include('pm.tasks.partials.status-switcher', ['task' => $task, 'compact' => false])
@@ -35,8 +35,8 @@
 
                 <dl class="mt-6 space-y-3 text-sm">
                     <div class="flex justify-between"><dt class="text-slate-400">تاريخ الاستحقاق</dt><dd>{{ optional($task->due_date)->format('Y-m-d') ?: 'غير محدد' }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-slate-400">الساعات المقدرة</dt><dd>{{ $task->estimated_hours ?: 0 }} ساعة</dd></div>
-                    <div class="flex justify-between"><dt class="text-slate-400">الساعات الفعلية</dt><dd>{{ $task->actual_hours ?: 0 }} ساعة</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">الساعات المقدرة</dt><dd>{{ \App\Support\Duration::fromHours($task->estimated_hours ?: 0) }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">الساعات الفعلية</dt><dd>{{ \App\Support\Duration::fromHours($task->actual_hours ?: 0) }}</dd></div>
                 </dl>
 
                 <div class="mt-6 rounded-2xl bg-white/5 p-4 text-sm text-slate-300">{{ $task->description ?: 'لا يوجد وصف للمهمة بعد.' }}</div>
@@ -165,15 +165,18 @@
             document.querySelectorAll('[data-task-timer-action]').forEach((button) => {
                 button.addEventListener('click', async () => {
                     const url = button.dataset.taskTimerUrl;
+                    const description = button.closest('.task-drawer-section')?.querySelector('[data-task-timer-description]')?.value?.trim() || '';
                     button.disabled = true;
 
                     try {
                         const response = await fetch(url, {
                             method: 'POST',
                             headers: {
+                                'Content-Type': 'application/json',
                                 'Accept': 'application/json',
                                 'X-CSRF-TOKEN': csrf,
                             },
+                            body: JSON.stringify({ description }),
                         });
                         const payload = await response.json();
 
@@ -197,3 +200,5 @@
         });
     </script>
 </x-app-layout>
+
+

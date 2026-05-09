@@ -94,7 +94,6 @@ class DatabaseSeeder extends Seeder
                 'deals.view', 'deals.create', 'deals.update', 'deals.delete', 'deals.pipeline',
                 'projects.view', 'projects.create', 'projects.update', 'projects.delete',
                 'tasks.view', 'tasks.create', 'tasks.update', 'tasks.delete', 'tasks.assign', 'tasks.comment', 'tasks.move',
-                'time_entries.view', 'time_entries.create', 'time_entries.update', 'time_entries.delete',
                 'reports.view', 'reports.export',
                 'notifications.view',
                 'audit_logs.view',
@@ -109,7 +108,6 @@ class DatabaseSeeder extends Seeder
                 'deals.view', 'deals.create', 'deals.update', 'deals.pipeline',
                 'projects.view',
                 'tasks.view', 'tasks.create', 'tasks.update', 'tasks.comment', 'tasks.move',
-                'time_entries.view', 'time_entries.create', 'time_entries.update',
                 'reports.view',
                 'notifications.view',
             ])->pluck('id')

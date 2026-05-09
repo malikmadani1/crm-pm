@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Support\Duration;
 
 class TaskLog extends Model
 {
@@ -144,7 +145,7 @@ class TaskLog extends Model
                 default => (string) $value,
             },
             'completion_percentage' => (int) $value.'%',
-            'estimated_hours', 'actual_hours' => rtrim(rtrim(number_format((float) $value, 2, '.', ''), '0'), '.').' ساعة',
+            'estimated_hours', 'actual_hours' => Duration::fromHours((float) $value),
             'assignees', 'tags' => $this->displayRelatedNames($value),
             default => is_string($value) ? trim($value) : (string) $value,
         };
@@ -167,3 +168,5 @@ class TaskLog extends Model
         return $names === [] ? 'لا يوجد' : implode('، ', $names);
     }
 }
+
+

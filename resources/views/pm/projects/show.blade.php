@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header :title="$project->name" :description="$project->description ?: 'Project overview, progress, tasks, and time tracking.'">
+        <x-page-header :title="$project->name" :description="$project->description ?: 'نظرة عامة على المشروع والتقدم والمهام وجلسات العمل المسجلة.'">
             @can('update', $project)
                 <a href="{{ route('projects.edit', $project) }}" class="btn-secondary">{{ __('Edit') }}</a>
             @endcan
@@ -75,22 +75,23 @@
             </div>
 
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">{{ __('Time Tracking') }}</h3>
+                <h3 class="text-lg font-semibold text-white">جلسات العمل على المهام</h3>
 
                 <div class="mt-4 space-y-3">
                     @forelse($project->timeEntries as $entry)
                         <div class="rounded-2xl bg-white/5 px-4 py-4">
                             <div class="flex items-center justify-between">
                                 <div class="font-semibold text-white">{{ $entry->user?->name }}</div>
-                                <div class="text-xs text-slate-400">{{ round($entry->minutes / 60, 1) }} {{ __('hours') }}</div>
+                                <div class="text-xs text-slate-400">{{ $entry->durationLabel() }}</div>
                             </div>
                             <div class="mt-1 text-xs text-slate-400">{{ $entry->description ?: __('No description') }}</div>
                         </div>
                     @empty
-                        <div class="text-sm text-slate-400">{{ __('No time entries recorded.') }}</div>
+                        <div class="text-sm text-slate-400">لا توجد جلسات عمل مسجلة على مهام هذا المشروع حتى الآن.</div>
                     @endforelse
                 </div>
             </div>
         </div>
     </div>
 </x-app-layout>
+

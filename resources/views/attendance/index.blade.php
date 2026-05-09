@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <x-page-header title="الحضور والانصراف" description="اعرف متى دخل كل موظف ومتى خرج وكم ساعة داوم في كل يوم." />
     </x-slot>
@@ -7,7 +7,7 @@
         <div class="grid gap-4 md:grid-cols-3">
             <x-stat-card label="أيام مسجلة" :value="$summary['days_count']" hint="عدد أيام الحضور المطابقة للتصفية" />
             <x-stat-card label="دوامات مفتوحة" :value="$summary['open_days_count']" hint="أيام تم تسجيل دخولها بدون خروج بعد" accent="amber" />
-            <x-stat-card label="إجمالي ساعات الدوام" :value="$summary['worked_hours']" hint="إجمالي الساعات في النتائج الحالية" accent="sky" />
+            <x-stat-card label="إجمالي ساعات الدوام" :value="$summary['worked_duration']" hint="إجمالي الساعات في النتائج الحالية" accent="sky" />
         </div>
 
         <form class="panel grid gap-4 lg:grid-cols-4">
@@ -44,7 +44,7 @@
                                 <td>{{ $record->work_date?->format('Y-m-d') }}</td>
                                 <td>{{ $record->checked_in_at?->format('H:i') ?: 'غير مسجل' }}</td>
                                 <td>{{ $record->checked_out_at?->format('H:i') ?: 'لم يخرج بعد' }}</td>
-                                <td>{{ round(($record->worked_minutes ?? 0) / 60, 2) }} ساعة</td>
+                                <td>{{ $record->workedDurationLabel() }}</td>
                                 <td>
                                     @if($record->checked_in_at && ! $record->checked_out_at)
                                         <x-status-badge value="داخل الدوام" color="amber" />
@@ -66,3 +66,5 @@
         @endif
     </div>
 </x-app-layout>
+
+

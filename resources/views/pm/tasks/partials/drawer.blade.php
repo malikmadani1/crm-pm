@@ -1,4 +1,4 @@
-<div class="task-drawer-shell flex h-full flex-col">
+﻿<div class="task-drawer-shell flex h-full flex-col">
     <div class="task-drawer-header border-b border-white/10 px-5 py-5">
         <div class="flex items-start justify-between gap-4">
             <div class="min-w-0 flex-1">
@@ -67,11 +67,11 @@
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-400">الساعات المقدرة</dt>
-                    <dd class="text-right text-slate-200">{{ $task->estimated_hours ?: 0 }} ساعة</dd>
+                    <dd class="text-right text-slate-200">{{ \App\Support\Duration::fromHours($task->estimated_hours ?: 0) }}</dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-400">الساعات الفعلية</dt>
-                    <dd class="text-right text-slate-200">{{ $task->actual_hours ?: 0 }} ساعة</dd>
+                    <dd class="text-right text-slate-200">{{ \App\Support\Duration::fromHours($task->actual_hours ?: 0) }}</dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-400">أنشأها</dt>
@@ -131,3 +131,5 @@
         </div>
     </div>
 </div>
+
+
