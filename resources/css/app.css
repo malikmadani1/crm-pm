@@ -1,0 +1,898 @@
+@import 'flag-icons/css/flag-icons.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --font-ui-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+        --font-ui-ar: 'Cairo', ui-sans-serif, system-ui, sans-serif;
+        --select-chevron-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+        --select-chevron-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2364758b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    }
+
+    html {
+        font-family: var(--font-ui-sans);
+        color-scheme: dark;
+    }
+
+    html.light {
+        color-scheme: light;
+    }
+
+    html[dir='rtl'] {
+        font-family: var(--font-ui-ar);
+    }
+
+    html[dir='rtl'] body {
+        text-align: right;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    body {
+        @apply transition-colors duration-300;
+    }
+
+    body,
+    .app-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(34, 211, 238, 0.45) transparent;
+    }
+
+    body::-webkit-scrollbar,
+    .app-scrollbar::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    body::-webkit-scrollbar-track,
+    .app-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    body::-webkit-scrollbar-thumb,
+    .app-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(34, 211, 238, 0.55), rgba(14, 165, 233, 0.4));
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background-clip: padding-box;
+    }
+
+    body::-webkit-scrollbar-thumb:hover,
+    .app-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, rgba(34, 211, 238, 0.85), rgba(14, 165, 233, 0.65));
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    html.light body {
+        @apply bg-slate-100 text-slate-900;
+    }
+
+    html.light body,
+    html.light .app-scrollbar {
+        scrollbar-color: rgba(14, 165, 233, 0.5) transparent;
+    }
+
+    [type='text'],
+    [type='email'],
+    [type='password'],
+    [type='number'],
+    [type='date'],
+    [type='datetime-local'],
+    select,
+    textarea {
+        @apply w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30;
+    }
+
+    html.light [type='text'],
+    html.light [type='email'],
+    html.light [type='password'],
+    html.light [type='number'],
+    html.light [type='date'],
+    html.light [type='datetime-local'],
+    html.light select,
+    html.light textarea {
+        @apply border-slate-200 bg-white text-slate-900;
+    }
+
+    html.light [type='text']::placeholder,
+    html.light [type='email']::placeholder,
+    html.light [type='password']::placeholder,
+    html.light [type='number']::placeholder,
+    html.light [type='date']::placeholder,
+    html.light [type='datetime-local']::placeholder,
+    html.light select::placeholder,
+    html.light textarea::placeholder {
+        color: rgb(148 163 184);
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: var(--select-chevron-dark);
+        background-repeat: no-repeat;
+        background-size: 1rem 1rem;
+        background-position: right 1rem center;
+        padding-inline-end: 3rem;
+        padding-inline-start: 1rem;
+    }
+
+    html.light select {
+        background-image: var(--select-chevron-light);
+    }
+
+    html[dir='rtl'] select {
+        background-position: left 1rem center;
+    }
+
+    select::-ms-expand {
+        display: none;
+    }
+
+    select option,
+    select optgroup {
+        background-color: rgb(15 23 42);
+        color: rgb(248 250 252);
+    }
+
+    html.light select option,
+    html.light select optgroup {
+        background-color: rgb(255 255 255);
+        color: rgb(15 23 42);
+    }
+
+    [type='checkbox'],
+    .app-checkbox {
+        accent-color: rgb(6 182 212);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        background-color: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+
+    [type='checkbox']:focus,
+    .app-checkbox:focus {
+        outline: none;
+        box-shadow:
+            0 0 0 3px rgba(6, 182, 212, 0.22),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+
+    [type='checkbox']:checked,
+    .app-checkbox:checked {
+        border-color: rgb(6 182 212);
+        background-color: rgb(6 182 212);
+    }
+
+    html.light [type='checkbox'],
+    html.light .app-checkbox {
+        border-color: rgb(148 163 184);
+        background-color: rgb(255 255 255);
+        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.16);
+    }
+
+    html.light [type='checkbox']:focus,
+    html.light .app-checkbox:focus {
+        box-shadow:
+            0 0 0 3px rgba(6, 182, 212, 0.18),
+            inset 0 0 0 1px rgba(148, 163, 184, 0.16);
+    }
+
+    html.light [type='checkbox']:checked,
+    html.light .app-checkbox:checked {
+        border-color: rgb(8 145 178);
+        background-color: rgb(6 182 212);
+    }
+}
+
+@layer components {
+    .app-shell {
+        background-image:
+            radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 25%),
+            radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.18), transparent 20%),
+            linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    }
+
+    html.light .app-shell {
+        background-image:
+            radial-gradient(circle at top left, rgba(14, 165, 233, 0.16), transparent 24%),
+            radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.12), transparent 22%),
+            linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .guest-shell {
+        background-image:
+            radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 25%),
+            radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.15), transparent 25%),
+            linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    }
+
+    html.light .guest-shell {
+        background-image:
+            radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 25%),
+            radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.14), transparent 25%),
+            linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .app-sidebar,
+    .app-header,
+    .app-footer,
+    .app-dropdown,
+    .guest-frame,
+    .guest-card,
+    .toast-shell {
+        @apply transition-colors duration-300;
+    }
+
+    html.light .app-sidebar {
+        background-color: rgba(248, 250, 252, 0.88);
+        border-color: rgba(148, 163, 184, 0.3);
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+    }
+
+    html.light .app-header {
+        background-color: rgba(248, 250, 252, 0.76);
+        border-color: rgba(148, 163, 184, 0.28);
+    }
+
+    html.light .app-footer {
+        border-color: rgba(148, 163, 184, 0.22);
+        color: rgb(100 116 139);
+    }
+
+    html.light .app-dropdown {
+        background-color: rgba(255, 255, 255, 0.97);
+        border-color: rgba(148, 163, 184, 0.22);
+        box-shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
+    }
+
+    html.light .app-topbar-button,
+    html.light .app-search-input,
+    html.light .guest-locale-button {
+        border-color: rgba(148, 163, 184, 0.24);
+        background-color: rgba(255, 255, 255, 0.86);
+        color: rgb(30 41 59);
+    }
+
+    html.light .app-topbar-button:hover,
+    html.light .guest-locale-button:hover {
+        background-color: rgb(255 255 255);
+    }
+
+    .notification-card-link {
+        @apply transition duration-200 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-cyan-500/30;
+    }
+
+    html.light .notification-card-link:hover {
+        background-color: rgba(14, 165, 233, 0.06);
+    }
+
+    html.light .app-nav-link {
+        color: rgb(71 85 105);
+    }
+
+    html.light .app-nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.86);
+        color: rgb(15 23 42);
+    }
+
+    html.light .app-nav-link[class*='bg-cyan-500/15'] {
+        color: rgb(8 47 73);
+    }
+
+    html.light .guest-frame {
+        border-color: rgba(148, 163, 184, 0.25);
+        background-color: rgba(255, 255, 255, 0.76);
+        box-shadow: 0 35px 70px rgba(15, 23, 42, 0.12);
+    }
+
+    html.light .guest-hero {
+        background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(248, 250, 252, 0.8), rgba(245, 158, 11, 0.08));
+    }
+
+    html.light .guest-card {
+        border-color: rgba(148, 163, 184, 0.24);
+        background-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 24px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    .guest-copy-badge,
+    .guest-highlight-item,
+    .guest-brand-mark {
+        box-shadow: 0 18px 40px rgba(2, 6, 23, 0.12);
+    }
+
+    .guest-highlight-item {
+        backdrop-filter: blur(14px);
+    }
+
+    .guest-toolbar-button {
+        padding-inline: 0;
+        width: 3.25rem;
+    }
+
+    html.light .guest-copy-badge,
+    html.light .guest-highlight-item {
+        box-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    html.light .guest-brand-mark {
+        border-color: rgba(14, 165, 233, 0.18);
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(255, 255, 255, 0.98));
+        box-shadow: 0 16px 30px rgba(14, 165, 233, 0.08);
+    }
+
+    .header-control {
+        @apply inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10 hover:text-white;
+        min-width: 3.25rem;
+    }
+
+    .header-control-icon {
+        @apply inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/5 text-slate-200 transition;
+    }
+
+    .header-control-flag {
+        @apply inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/5 text-xl leading-none transition;
+    }
+
+    .header-control-flag .fi {
+        @apply h-4 w-6 rounded-sm shadow-sm;
+    }
+
+    .header-control-code {
+        @apply text-sm font-black tracking-[0.16em] text-slate-100;
+    }
+
+    .header-control-badge {
+        @apply absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[11px] font-bold text-white;
+    }
+
+    html.light .header-control {
+        @apply border-slate-200 bg-white/90 text-slate-700 hover:bg-white hover:text-slate-900;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    html.light .header-control-icon {
+        @apply bg-slate-100 text-slate-600;
+    }
+
+    html.light .header-control-flag {
+        @apply bg-slate-100;
+    }
+
+    html.light .header-control-code {
+        @apply text-slate-700;
+    }
+
+    .panel {
+        @apply rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-lg shadow-slate-950/10;
+    }
+
+    html.light .panel {
+        @apply border-slate-200/80 bg-white shadow-lg shadow-slate-200/60;
+    }
+
+    .table-shell {
+        @apply overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5;
+    }
+
+    html.light .table-shell {
+        @apply border-slate-200/80 bg-white shadow-lg shadow-slate-200/50;
+    }
+
+    .table-shell table {
+        @apply min-w-full divide-y divide-white/10;
+    }
+
+    html.light .table-shell table {
+        @apply divide-slate-200;
+    }
+
+    .table-shell thead {
+        @apply bg-white/5 text-left text-xs uppercase tracking-[0.25em] text-slate-400;
+    }
+
+    html.light .table-shell thead {
+        @apply bg-slate-50 text-slate-500;
+    }
+
+    .table-shell th {
+        @apply px-5 py-4 font-semibold;
+    }
+
+    .table-shell td {
+        @apply px-5 py-4 text-sm text-slate-200;
+    }
+
+    html.light .table-shell td {
+        @apply text-slate-700;
+    }
+
+    .table-shell tbody tr {
+        @apply border-t border-white/5;
+    }
+
+    html.light .table-shell tbody tr {
+        @apply border-slate-100;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10;
+    }
+
+    html.light .btn-secondary {
+        @apply border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+    }
+
+    html.light .status-badge[data-color='slate'] {
+        @apply border-slate-300 bg-slate-100 text-slate-700;
+    }
+
+    html.light .status-badge[data-color='cyan'] {
+        @apply border-cyan-300 bg-cyan-50 text-cyan-700;
+    }
+
+    html.light .status-badge[data-color='sky'] {
+        @apply border-sky-300 bg-sky-50 text-sky-700;
+    }
+
+    html.light .status-badge[data-color='indigo'] {
+        @apply border-indigo-300 bg-indigo-50 text-indigo-700;
+    }
+
+    html.light .status-badge[data-color='emerald'] {
+        @apply border-emerald-300 bg-emerald-50 text-emerald-700;
+    }
+
+    html.light .status-badge[data-color='amber'] {
+        @apply border-amber-300 bg-amber-50 text-amber-700;
+    }
+
+    html.light .status-badge[data-color='orange'] {
+        @apply border-orange-300 bg-orange-50 text-orange-700;
+    }
+
+    html.light .status-badge[data-color='rose'] {
+        @apply border-rose-300 bg-rose-50 text-rose-700;
+    }
+
+    .delete-action-trigger {
+        @apply rounded-xl border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/20;
+    }
+
+    .delete-action-backdrop {
+        @apply bg-slate-950/70;
+    }
+
+    .delete-action-modal {
+        @apply rounded-[2rem] border border-white/10 bg-slate-900/95 shadow-slate-950/40;
+    }
+
+    .delete-action-icon {
+        @apply rounded-2xl text-rose-300;
+        background-color: rgba(244, 63, 94, 0.12);
+    }
+
+    .delete-action-title {
+        color: rgb(255 255 255);
+    }
+
+    .delete-action-message {
+        @apply text-slate-400;
+    }
+
+    .task-drawer-panel {
+        @apply border-l;
+        background-color: rgba(2, 6, 23, 0.98);
+    }
+
+    .task-drawer-backdrop {
+        background:
+            linear-gradient(180deg, rgba(2, 6, 23, 0.56), rgba(2, 6, 23, 0.72));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .task-drawer-shell {
+        background-color: rgba(2, 6, 23, 0.98);
+    }
+
+    .task-drawer-header {
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.94));
+    }
+
+    .task-drawer-section {
+        @apply shadow-sm;
+    }
+
+    .task-status-switcher {
+        @apply rounded-3xl border border-white/10 bg-white/5 p-4;
+    }
+
+    .task-status-switcher-compact {
+        @apply p-3;
+    }
+
+    .task-status-switcher-title {
+        @apply mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400;
+    }
+
+    .task-status-switcher-grid {
+        @apply grid grid-cols-2 gap-2;
+    }
+
+    .task-status-chip {
+        @apply rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10;
+    }
+
+    .task-status-chip.is-active {
+        @apply border-cyan-400/40 bg-cyan-500/15 text-cyan-200;
+    }
+
+    .task-status-chip:disabled {
+        @apply cursor-not-allowed opacity-60;
+    }
+
+    .delete-action-close {
+        @apply text-slate-500 hover:bg-white/5 hover:text-slate-300;
+    }
+
+    .delete-action-footer {
+        @apply border-white/10;
+    }
+
+    .delete-action-confirm {
+        @apply inline-flex items-center rounded-2xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-400;
+    }
+
+    html.light .delete-action-trigger {
+        @apply border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-300 hover:bg-rose-100;
+    }
+
+    html.light .delete-action-backdrop {
+        background-color: rgba(15, 23, 42, 0.4);
+    }
+
+    html.light .delete-action-modal {
+        @apply border-rose-100 bg-white shadow-slate-200/80;
+    }
+
+    html.light .delete-action-icon {
+        @apply bg-rose-50 text-rose-600;
+    }
+
+    html.light .delete-action-title {
+        @apply text-slate-950;
+    }
+
+    html.light .delete-action-message {
+        @apply text-slate-600;
+    }
+
+    html.light .task-drawer-panel,
+    html.light .task-drawer-shell {
+        background-color: rgba(255, 255, 255, 0.96);
+        color: rgb(15 23 42);
+        border-color: rgba(148, 163, 184, 0.26);
+    }
+
+    html.light .task-drawer-backdrop {
+        background:
+            linear-gradient(180deg, rgba(226, 232, 240, 0.44), rgba(148, 163, 184, 0.34));
+        backdrop-filter: blur(16px) saturate(0.88);
+        -webkit-backdrop-filter: blur(16px) saturate(0.88);
+    }
+
+    html.light .task-drawer-header {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
+    }
+
+    html.light .task-drawer-shell .text-white {
+        color: rgb(15 23 42);
+    }
+
+    html.light .task-drawer-shell .text-slate-400 {
+        color: rgb(100 116 139);
+    }
+
+    html.light .task-drawer-shell .text-slate-300 {
+        color: rgb(71 85 105);
+    }
+
+    html.light .task-drawer-shell .bg-slate-950\/50 {
+        background-color: rgb(255 255 255);
+        border: 1px solid rgb(226 232 240);
+    }
+
+    html.light .task-drawer-section,
+    html.light .task-status-switcher {
+        @apply border-slate-200 bg-slate-50;
+    }
+
+    html.light .task-drawer-body {
+        background:
+            linear-gradient(180deg, rgba(248, 250, 252, 0.94), rgba(241, 245, 249, 0.96));
+    }
+
+    html.light .task-status-chip {
+        @apply border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+    }
+
+    html.light .task-status-chip.is-active {
+        @apply border-cyan-300 bg-cyan-50 text-cyan-700;
+    }
+
+    html.light .delete-action-close {
+        @apply text-slate-500 hover:bg-rose-50 hover:text-slate-800;
+    }
+
+    html.light .delete-action-footer {
+        @apply border-slate-200 bg-slate-50/80;
+    }
+
+    html.light .delete-action-confirm {
+        @apply bg-rose-600 hover:bg-rose-500;
+        color: rgb(255 255 255);
+    }
+
+    .toast-shell {
+        background-color: rgba(15, 23, 42, 0.86);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 22px 55px rgba(2, 6, 23, 0.22);
+    }
+
+    .toast-title {
+        color: rgb(248 250 252);
+    }
+
+    .toast-message {
+        color: rgb(203 213 225);
+    }
+
+    .toast-close {
+        color: rgb(148 163 184);
+    }
+
+    .toast-progress-track {
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .toast-progress-bar {
+        transition: width 120ms linear;
+    }
+
+    .toast-success {
+        border-color: rgba(52, 211, 153, 0.26);
+        background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(15, 23, 42, 0.92));
+    }
+
+    .toast-success .toast-icon {
+        background-color: rgba(16, 185, 129, 0.16);
+        color: rgb(110 231 183);
+    }
+
+    .toast-success .toast-progress-bar {
+        background: linear-gradient(90deg, rgb(52 211 153), rgb(16 185 129));
+    }
+
+    .toast-error {
+        border-color: rgba(251, 113, 133, 0.28);
+        background-image: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(15, 23, 42, 0.92));
+    }
+
+    .toast-error .toast-icon {
+        background-color: rgba(244, 63, 94, 0.14);
+        color: rgb(253 164 175);
+    }
+
+    .toast-error .toast-progress-bar {
+        background: linear-gradient(90deg, rgb(251 113 133), rgb(244 63 94));
+    }
+
+    .toast-warning {
+        border-color: rgba(251, 191, 36, 0.28);
+        background-image: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(15, 23, 42, 0.92));
+    }
+
+    .toast-warning .toast-icon {
+        background-color: rgba(245, 158, 11, 0.14);
+        color: rgb(253 230 138);
+    }
+
+    .toast-warning .toast-progress-bar {
+        background: linear-gradient(90deg, rgb(251 191 36), rgb(245 158 11));
+    }
+
+    .toast-info {
+        border-color: rgba(56, 189, 248, 0.28);
+        background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(15, 23, 42, 0.92));
+    }
+
+    .toast-info .toast-icon {
+        background-color: rgba(14, 165, 233, 0.14);
+        color: rgb(125 211 252);
+    }
+
+    .toast-info .toast-progress-bar {
+        background: linear-gradient(90deg, rgb(56 189 248), rgb(14 165 233));
+    }
+
+    html.light .toast-shell {
+        border-color: rgba(148, 163, 184, 0.24);
+        background-color: rgba(255, 255, 255, 0.98);
+        background-image: none;
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+    }
+
+    html.light .toast-title {
+        color: rgb(15 23 42);
+    }
+
+    html.light .toast-message {
+        color: rgb(51 65 85);
+    }
+
+    html.light .toast-close {
+        color: rgb(100 116 139);
+    }
+
+    html.light .toast-progress-track {
+        background-color: rgb(226 232 240);
+    }
+
+    html.light .toast-success {
+        background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(255, 255, 255, 0.98));
+    }
+
+    html.light .toast-success .toast-icon {
+        background-color: rgba(16, 185, 129, 0.12);
+        color: rgb(5 150 105);
+    }
+
+    html.light .toast-error {
+        background-image: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(255, 255, 255, 0.98));
+    }
+
+    html.light .toast-error .toast-icon {
+        background-color: rgba(244, 63, 94, 0.1);
+        color: rgb(225 29 72);
+    }
+
+    html.light .toast-warning {
+        background-image: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(255, 255, 255, 0.98));
+    }
+
+    html.light .toast-warning .toast-icon {
+        background-color: rgba(245, 158, 11, 0.12);
+        color: rgb(217 119 6);
+    }
+
+    html.light .toast-info {
+        background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(255, 255, 255, 0.98));
+    }
+
+    html.light .toast-info .toast-icon {
+        background-color: rgba(14, 165, 233, 0.11);
+        color: rgb(2 132 199);
+    }
+
+    html[dir='rtl'] .table-shell thead,
+    html[dir='rtl'] .table-shell th,
+    html[dir='rtl'] .table-shell td {
+        @apply text-right;
+    }
+
+    html[dir='rtl'] input,
+    html[dir='rtl'] select,
+    html[dir='rtl'] textarea {
+        direction: rtl;
+        text-align: right;
+    }
+}
+
+@layer utilities {
+    html.light [class*='bg-white/5'] {
+        background-color: rgba(255, 255, 255, 0.84);
+    }
+
+    html.light [class*='bg-white/10'] {
+        background-color: rgba(255, 255, 255, 0.98);
+    }
+
+    html.light [class*='bg-slate-950/80'] {
+        background-color: rgba(248, 250, 252, 0.95);
+    }
+
+    html.light [class*='bg-slate-950/70'] {
+        background-color: rgba(248, 250, 252, 0.98);
+    }
+
+    html.light [class*='bg-slate-950/60'] {
+        background-color: rgba(255, 255, 255, 0.94);
+    }
+
+    html.light [class*='bg-slate-950'] {
+        background-color: rgb(248 250 252);
+    }
+
+    html.light [class*='bg-slate-900/95'] {
+        background-color: rgba(255, 255, 255, 0.98);
+    }
+
+    html.light [class*='bg-slate-900/70'] {
+        background-color: rgba(248, 250, 252, 0.94);
+    }
+
+    html.light [class*='bg-slate-900/60'] {
+        background-color: rgba(248, 250, 252, 0.92);
+    }
+
+    html.light [class*='bg-slate-900/50'] {
+        background-color: rgba(241, 245, 249, 0.95);
+    }
+
+    html.light [class*='bg-slate-900'] {
+        background-color: rgb(248 250 252);
+    }
+
+    html.light [class*='bg-slate-800'] {
+        background-color: rgb(241 245 249);
+    }
+
+    html.light [class*='border-white/10'] {
+        border-color: rgba(148, 163, 184, 0.24);
+    }
+
+    html.light [class*='border-white/5'] {
+        border-color: rgba(226, 232, 240, 0.95);
+    }
+
+    html.light :is(main, .app-sidebar, .app-header, .app-dropdown, .guest-frame, .guest-card) [class*='text-white']:not([class*='bg-rose-']):not([class*='bg-red-']):not([class*='bg-emerald-']):not([class*='bg-cyan-500']):not([class*='bg-gray-']) {
+        color: rgb(15 23 42);
+    }
+
+    html.light [class*='text-slate-200'] {
+        color: rgb(30 41 59);
+    }
+
+    html.light [class*='text-slate-300'] {
+        color: rgb(51 65 85);
+    }
+
+    html.light [class*='text-slate-400'] {
+        color: rgb(71 85 105);
+    }
+
+    html.light [class*='text-slate-500'] {
+        color: rgb(100 116 139);
+    }
+
+    html.light [class*='hover:bg-white/10']:hover {
+        background-color: rgba(248, 250, 252, 0.98);
+    }
+
+    html.light [class*='hover:bg-white/5']:hover {
+        background-color: rgba(255, 255, 255, 0.96);
+    }
+
+    html.light [class*='hover:bg-slate-900']:hover {
+        background-color: rgb(241 245 249);
+    }
+
+    html.light [class*='shadow-slate-950/50'] {
+        box-shadow: 0 30px 70px rgba(15, 23, 42, 0.12);
+    }
+
+    html.light [class*='shadow-slate-950/10'] {
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+}
