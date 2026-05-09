@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Task;
 use Illuminate\Bus\Queueable;
+
 use Illuminate\Notifications\Notification;
 
 class TaskAssignedNotification extends Notification
@@ -12,6 +13,7 @@ class TaskAssignedNotification extends Notification
 
     public function __construct(private readonly Task $task)
     {
+
     }
 
     public function via(object $notifiable): array
