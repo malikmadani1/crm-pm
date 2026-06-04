@@ -3,19 +3,13 @@
     $languageSwitchLocale = $isRtl ? 'en' : 'ar';
     $languageSwitchFlagClass = $languageSwitchLocale === 'en' ? 'fi-gb' : 'fi-sy';
     $languageSwitchCode = strtoupper($languageSwitchLocale);
-    $languageSwitchTitle = $isRtl ? 'English' : 'العربية';
-    $guestEyebrow = $isRtl ? 'مساحة عمل موحدة' : 'Unified workspace';
-    $guestTitle = $isRtl
-        ? 'إدارة العملاء والمشاريع من شاشة واحدة.'
-        : 'Manage customers and projects from one calm workspace.';
-    $guestSubtitle = $isRtl
-        ? 'واجهة عملية ومختصرة لمتابعة العملاء، الصفقات، المشاريع، والمهام اليومية بدون تشتيت.'
-        : 'A focused workspace for CRM, deals, projects, and daily execution without the noise.';
-    $guestHighlights = $isRtl
-        ? ['العملاء والصفقات', 'المشاريع والمهام', 'لوحة تنفيذ واضحة']
-        : ['Customers and deals', 'Projects and tasks', 'Clear execution flow'];
-    $themeLightLabel = $isRtl ? 'الوضع الفاتح' : 'Light mode';
-    $themeDarkLabel = $isRtl ? 'الوضع الداكن' : 'Dark mode';
+    $languageSwitchTitle = $isRtl ? __('English') : __('Arabic');
+    $guestEyebrow = __('Unified workspace');
+    $guestTitle = __('Manage customers and projects from one calm workspace.');
+    $guestSubtitle = __('A focused workspace for CRM, deals, projects, and daily execution without the noise.');
+    $guestHighlights = [__('Customers and deals'), __('Projects and tasks'), __('Clear execution flow')];
+    $themeLightLabel = __('Light mode');
+    $themeDarkLabel = __('Dark mode');
 @endphp
 
 <!DOCTYPE html>

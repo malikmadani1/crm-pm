@@ -1,25 +1,25 @@
 ﻿<x-app-layout>
     <x-slot name="header">
-        <x-page-header title="تقرير الفريق" description="ملخص إنجاز الفريق مع وقت العمل على المهام والحضور اليومي." />
+        <x-page-header :title="__('Team Report')" :description="__('Summarize team delivery with task work time and daily attendance.')" />
     </x-slot>
 
     <div class="space-y-6">
         <div class="grid gap-4 md:grid-cols-3">
-            <x-stat-card label="ساعات الدوام" :value="\App\Support\Duration::fromHours($report['summary']['attendance_hours'])" />
-            <x-stat-card label="ساعات المهام" :value="\App\Support\Duration::fromHours($report['summary']['tracked_hours'])" accent="sky" />
-            <x-stat-card label="نسبة الاستفادة" :value="$report['summary']['utilization'].'%'" accent="amber" />
+            <x-stat-card :label="__('Attendance hours')" :value="\App\Support\Duration::fromHours($report['summary']['attendance_hours'])" />
+            <x-stat-card :label="__('Task hours')" :value="\App\Support\Duration::fromHours($report['summary']['tracked_hours'])" accent="sky" />
+            <x-stat-card :label="__('Utilization')" :value="$report['summary']['utilization'].'%'" accent="amber" />
         </div>
 
         <div class="table-shell">
         <table>
             <thead>
                 <tr>
-                    <th>العضو</th>
-                    <th>المهام المكتملة</th>
-                    <th>ساعات المهام</th>
-                    <th>أيام الحضور</th>
-                    <th>ساعات الدوام</th>
-                    <th>نسبة الاستفادة</th>
+                    <th>{{ __('Member') }}</th>
+                    <th>{{ __('Completed tasks') }}</th>
+                    <th>{{ __('Task hours') }}</th>
+                    <th>{{ __('Attendance days') }}</th>
+                    <th>{{ __('Attendance hours') }}</th>
+                    <th>{{ __('Utilization') }}</th>
                 </tr>
             </thead>
             <tbody>

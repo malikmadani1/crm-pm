@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header :title="$project->name" :description="$project->description ?: 'نظرة عامة على المشروع والتقدم والمهام وجلسات العمل المسجلة.'">
+        <x-page-header :title="$project->name" :description="$project->description ?: __('Project overview, progress, tasks, and recorded work sessions.')">
             @can('update', $project)
                 <a href="{{ route('projects.edit', $project) }}" class="btn-secondary">{{ __('Edit') }}</a>
             @endcan
@@ -75,7 +75,7 @@
             </div>
 
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">جلسات العمل على المهام</h3>
+                <h3 class="text-lg font-semibold text-white">{{ __('Task work sessions') }}</h3>
 
                 <div class="mt-4 space-y-3">
                     @forelse($project->timeEntries as $entry)
@@ -87,7 +87,7 @@
                             <div class="mt-1 text-xs text-slate-400">{{ $entry->description ?: __('No description') }}</div>
                         </div>
                     @empty
-                        <div class="text-sm text-slate-400">لا توجد جلسات عمل مسجلة على مهام هذا المشروع حتى الآن.</div>
+                        <div class="text-sm text-slate-400">{{ __('No task work sessions have been recorded for this project yet.') }}</div>
                     @endforelse
                 </div>
             </div>

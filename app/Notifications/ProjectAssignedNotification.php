@@ -23,8 +23,8 @@ class ProjectAssignedNotification extends Notification
     {
         return [
             'type' => 'project_assigned',
-            'title' => __('تمت إضافتك إلى مشروع'),
-            'message' => __('تمت إضافتك إلى المشروع :project.', ['project' => $this->project->name]),
+            'title' => __('You were added to a project'),
+            'message' => __('You were added to project :project.', ['project' => $this->project->name]),
             'url' => route('projects.show', $this->project),
             'project_id' => $this->project->id,
         ];

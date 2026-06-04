@@ -12,42 +12,7 @@
         'rose' => 'border-rose-400/20 bg-rose-500/10 text-rose-200',
     ];
 
-    $normalized = str((string) $value)->replace('-', '_')->snake()->lower()->toString();
-    $labels = [
-        'potential' => 'محتمل',
-        'active' => 'نشط',
-        'not_interested' => 'غير مهتم',
-        'new_lead' => 'عميل محتمل جديد',
-        'contacted' => 'تم التواصل',
-        'qualified' => 'مؤهل',
-        'proposal_sent' => 'تم إرسال العرض',
-        'negotiation' => 'تفاوض',
-        'won' => 'رابحة',
-        'lost' => 'خاسرة',
-        'in_progress' => 'قيد التنفيذ',
-        'completed' => 'مكتمل',
-        'paused' => 'متوقف',
-        'on_hold' => 'معلّق',
-        'todo' => 'للعمل',
-        'to_do' => 'للعمل',
-        'review' => 'قيد المراجعة',
-        'done' => 'مكتملة',
-        'low' => 'منخفضة',
-        'medium' => 'متوسطة',
-        'high' => 'عالية',
-        'pending' => 'معلّق',
-        'cancelled' => 'ملغى',
-        'inactive' => 'غير نشط',
-        'open' => 'مفتوحة',
-        'closed' => 'مغلقة',
-        'yes' => 'نعم',
-        'no' => 'لا',
-        'live_data' => 'بيانات مباشرة',
-    ];
-
-    $label = is_numeric($value)
-        ? $value
-        : __($labels[$normalized] ?? str((string) $value)->replace('_', ' ')->title()->toString());
+    $label = \App\Support\Labels::status($value);
 @endphp
 
 <span

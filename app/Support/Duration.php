@@ -13,20 +13,20 @@ class Duration
         $remainingSeconds = $seconds % 60;
 
         if ($hours > 0) {
-            $parts = ["{$hours} ساعة"];
+            $parts = [self::unit($hours, 'hour', 'hours')];
 
             if ($minutes > 0) {
-                $parts[] = "{$minutes} دقيقة";
+                $parts[] = self::unit($minutes, 'minute', 'minutes');
             }
 
-            return implode(' و ', $parts);
+            return implode(' '.__('and').' ', $parts);
         }
 
         if ($minutes > 0) {
-            return "{$minutes} دقيقة و {$remainingSeconds} ثانية";
+            return self::unit($minutes, 'minute', 'minutes').' '.__('and').' '.self::unit($remainingSeconds, 'second', 'seconds');
         }
 
-        return "{$remainingSeconds} ثانية";
+        return self::unit($remainingSeconds, 'second', 'seconds');
     }
 
     public static function fromMinutes(int|float|null $minutes): string
@@ -37,5 +37,10 @@ class Duration
     public static function fromHours(int|float|null $hours): string
     {
         return self::fromSeconds((int) round(((float) ($hours ?? 0)) * 3600));
+    }
+
+    private static function unit(int $value, string $singular, string $plural): string
+    {
+        return $value.' '.($value === 1 ? __($singular) : __($plural));
     }
 }

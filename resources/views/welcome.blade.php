@@ -1,7 +1,7 @@
 @php
     $isRtl = app()->isLocale('ar');
     $languageSwitchLocale = $isRtl ? 'en' : 'ar';
-    $languageSwitchLabel = $isRtl ? __('English') : 'العربية';
+    $languageSwitchLabel = $isRtl ? __('English') : __('Arabic');
 @endphp
 
 <!DOCTYPE html>

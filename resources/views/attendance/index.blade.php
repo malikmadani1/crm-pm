@@ -1,18 +1,18 @@
 ﻿<x-app-layout>
     <x-slot name="header">
-        <x-page-header title="الحضور والانصراف" description="اعرف متى دخل كل موظف ومتى خرج وكم ساعة داوم في كل يوم." />
+        <x-page-header :title="__('Attendance')" :description="__('See when each employee checked in, checked out, and how many hours they worked each day.')" />
     </x-slot>
 
     <div class="space-y-6">
         <div class="grid gap-4 md:grid-cols-3">
-            <x-stat-card label="أيام مسجلة" :value="$summary['days_count']" hint="عدد أيام الحضور المطابقة للتصفية" />
-            <x-stat-card label="دوامات مفتوحة" :value="$summary['open_days_count']" hint="أيام تم تسجيل دخولها بدون خروج بعد" accent="amber" />
-            <x-stat-card label="إجمالي ساعات الدوام" :value="$summary['worked_duration']" hint="إجمالي الساعات في النتائج الحالية" accent="sky" />
+            <x-stat-card :label="__('Recorded days')" :value="$summary['days_count']" :hint="__('Attendance days matching the current filters')" />
+            <x-stat-card :label="__('Open work days')" :value="$summary['open_days_count']" :hint="__('Days with check-in but no check-out yet')" accent="amber" />
+            <x-stat-card :label="__('Total work hours')" :value="$summary['worked_duration']" :hint="__('Total hours in the current results')" accent="sky" />
         </div>
 
         <form class="panel grid gap-4 lg:grid-cols-4">
             <select name="user_id">
-                <option value="">كل الموظفين</option>
+                <option value="">{{ __('All employees') }}</option>
                 @foreach($users as $user)
                     <option value="{{ $user->id }}" @selected((string) request('user_id') === (string) $user->id)>{{ $user->name }}</option>
                 @endforeach
@@ -21,7 +21,7 @@
             <input type="date" name="from" value="{{ request('from') }}">
             <input type="date" name="to" value="{{ request('to') }}">
 
-            <button class="btn-secondary">تطبيق التصفية</button>
+            <button class="btn-secondary">{{ __('Apply Filters') }}</button>
         </form>
 
         @if($records->count())
@@ -29,12 +29,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>الموظف</th>
-                            <th>التاريخ</th>
-                            <th>وقت الدخول</th>
-                            <th>وقت الخروج</th>
-                            <th>ساعات الدوام</th>
-                            <th>الحالة</th>
+                            <th>{{ __('Employee') }}</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Check-in Time') }}</th>
+                            <th>{{ __('Check-out Time') }}</th>
+                            <th>{{ __('Work Hours') }}</th>
+                            <th>{{ __('Status') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,16 +42,16 @@
                             <tr>
                                 <td>{{ $record->user?->name }}</td>
                                 <td>{{ $record->work_date?->format('Y-m-d') }}</td>
-                                <td>{{ $record->checked_in_at?->format('H:i') ?: 'غير مسجل' }}</td>
-                                <td>{{ $record->checked_out_at?->format('H:i') ?: 'لم يخرج بعد' }}</td>
+                                <td>{{ $record->checked_in_at?->format('H:i') ?: __('Not recorded') }}</td>
+                                <td>{{ $record->checked_out_at?->format('H:i') ?: __('Not checked out yet') }}</td>
                                 <td>{{ $record->workedDurationLabel() }}</td>
                                 <td>
                                     @if($record->checked_in_at && ! $record->checked_out_at)
-                                        <x-status-badge value="داخل الدوام" color="amber" />
+                                        <x-status-badge :value="__('At work')" color="amber" />
                                     @elseif($record->checked_in_at && $record->checked_out_at)
-                                        <x-status-badge value="منتهي" color="emerald" />
+                                        <x-status-badge :value="__('Completed')" color="emerald" />
                                     @else
-                                        <x-status-badge value="غير مكتمل" color="rose" />
+                                        <x-status-badge :value="__('Incomplete')" color="rose" />
                                     @endif
                                 </td>
                             </tr>
@@ -62,7 +62,7 @@
 
             {{ $records->links() }}
         @else
-            <x-empty-state title="لا توجد سجلات حضور بعد" message="ستظهر هنا سجلات دخول وخروج الموظفين بمجرد بدء استخدام النظام." />
+            <x-empty-state :title="__('No attendance records yet')" :message="__('Employee check-in and check-out records will appear here once the system is used.')" />
         @endif
     </div>
 </x-app-layout>

@@ -1,15 +1,15 @@
 ﻿<x-app-layout>
     <x-slot name="header">
-        <x-page-header :title="$task->title" :description="$task->project?->name ?: 'تفاصيل المهمة وسجل العمل عليها'">
+        <x-page-header :title="$task->title" :description="$task->project?->name ?: __('Task details and work history')">
             @include('pm.tasks.partials.status-switcher', ['task' => $task, 'compact' => false])
             @can('update', $task)
-                <a href="{{ route('tasks.edit', $task) }}" class="btn-secondary">تعديل</a>
+                <a href="{{ route('tasks.edit', $task) }}" class="btn-secondary">{{ __('Edit') }}</a>
             @endcan
             @can('delete', $task)
                 <x-delete-action
                     :action="route('tasks.destroy', $task)"
-                    title="حذف المهمة"
-                    message="هل أنت متأكد من حذف هذه المهمة؟"
+                    :title="__('Delete task')"
+                    :message="__('Are you sure you want to delete this task?')"
                 />
             @endcan
         </x-page-header>
@@ -20,7 +20,7 @@
             <div class="panel">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="text-sm text-slate-400">{{ $task->project?->name ?: 'بدون مشروع' }}</div>
+                        <div class="text-sm text-slate-400">{{ $task->project?->name ?: __('No project') }}</div>
                         <div class="mt-1 text-2xl font-semibold text-white">{{ $task->completion_percentage }}%</div>
                     </div>
                     <div class="flex gap-2">
@@ -34,12 +34,12 @@
                 </div>
 
                 <dl class="mt-6 space-y-3 text-sm">
-                    <div class="flex justify-between"><dt class="text-slate-400">تاريخ الاستحقاق</dt><dd>{{ optional($task->due_date)->format('Y-m-d') ?: 'غير محدد' }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-slate-400">الساعات المقدرة</dt><dd>{{ \App\Support\Duration::fromHours($task->estimated_hours ?: 0) }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-slate-400">الساعات الفعلية</dt><dd>{{ \App\Support\Duration::fromHours($task->actual_hours ?: 0) }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">{{ __('Due Date') }}</dt><dd>{{ optional($task->due_date)->format('Y-m-d') ?: __('Not specified') }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">{{ __('Estimated Hours') }}</dt><dd>{{ \App\Support\Duration::fromHours($task->estimated_hours ?: 0) }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">{{ __('Actual Hours') }}</dt><dd>{{ \App\Support\Duration::fromHours($task->actual_hours ?: 0) }}</dd></div>
                 </dl>
 
-                <div class="mt-6 rounded-2xl bg-white/5 p-4 text-sm text-slate-300">{{ $task->description ?: 'لا يوجد وصف للمهمة بعد.' }}</div>
+                <div class="mt-6 rounded-2xl bg-white/5 p-4 text-sm text-slate-300">{{ $task->description ?: __('No task description yet.') }}</div>
             </div>
 
             @include('pm.tasks.partials.timer-card', [
@@ -51,27 +51,27 @@
             ])
 
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">المكلّفون والوسوم</h3>
+                <h3 class="text-lg font-semibold text-white">{{ __('Assignees and tags') }}</h3>
 
                 <div class="mt-4 space-y-4">
                     <div>
-                        <div class="mb-2 text-xs uppercase tracking-[0.3em] text-slate-500">المكلّفون</div>
+                        <div class="mb-2 text-xs uppercase tracking-[0.3em] text-slate-500">{{ __('Assignees') }}</div>
                         <div class="flex flex-wrap gap-2">
                             @forelse($task->assignees as $assignee)
                                 <x-status-badge :value="$assignee->name" color="cyan" />
                             @empty
-                                <span class="text-sm text-slate-400">لا يوجد مكلّفون بعد.</span>
+                                <span class="text-sm text-slate-400">{{ __('No assignees yet.') }}</span>
                             @endforelse
                         </div>
                     </div>
 
                     <div>
-                        <div class="mb-2 text-xs uppercase tracking-[0.3em] text-slate-500">الوسوم</div>
+                        <div class="mb-2 text-xs uppercase tracking-[0.3em] text-slate-500">{{ __('Tags') }}</div>
                         <div class="flex flex-wrap gap-2">
                             @forelse($task->tags as $tag)
                                 <x-status-badge :value="$tag->name" color="amber" />
                             @empty
-                                <span class="text-sm text-slate-400">لا توجد وسوم.</span>
+                                <span class="text-sm text-slate-400">{{ __('No tags.') }}</span>
                             @endforelse
                         </div>
                     </div>
@@ -81,31 +81,31 @@
 
         <div class="space-y-6">
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">التعليقات</h3>
+                <h3 class="text-lg font-semibold text-white">{{ __('Comments') }}</h3>
 
                 <form method="POST" action="{{ route('tasks.comments.store', $task) }}" class="mt-4 space-y-4">
                     @csrf
-                    <textarea name="body" rows="4" placeholder="اكتب تحديثًا أو ملاحظة تخص المهمة..."></textarea>
-                    <button class="btn-primary">إضافة تعليق</button>
+                    <textarea name="body" rows="4" placeholder="{{ __('Write an update or note about this task...') }}"></textarea>
+                    <button class="btn-primary">{{ __('Add Comment') }}</button>
                 </form>
 
                 <div class="mt-5 space-y-3">
                     @forelse($task->comments as $comment)
                         <div id="comment-{{ $comment->id }}" class="rounded-2xl bg-white/5 px-4 py-4">
                             <div class="flex items-center justify-between">
-                                <div class="font-semibold text-white">{{ $comment->user?->name ?: 'النظام' }}</div>
+                                <div class="font-semibold text-white">{{ $comment->user?->name ?: __('System') }}</div>
                                 <div class="text-xs text-slate-500">{{ $comment->created_at?->diffForHumans() }}</div>
                             </div>
                             <div class="mt-2 text-sm text-slate-300">{{ $comment->body }}</div>
                         </div>
                     @empty
-                        <div class="text-sm text-slate-400">لا توجد تعليقات بعد.</div>
+                        <div class="text-sm text-slate-400">{{ __('No comments yet.') }}</div>
                     @endforelse
                 </div>
             </div>
 
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">سجل النشاط</h3>
+                <h3 class="text-lg font-semibold text-white">{{ __('Activity log') }}</h3>
 
                 <div class="mt-4 space-y-3">
                     @forelse($task->logs as $log)
@@ -119,7 +119,7 @@
                             <div class="mt-2 text-[11px] text-slate-500">{{ $log->created_at?->diffForHumans() }}</div>
                         </div>
                     @empty
-                        <div class="text-sm text-slate-400">لا يوجد نشاط مسجل بعد.</div>
+                        <div class="text-sm text-slate-400">{{ __('No activity recorded yet.') }}</div>
                     @endforelse
                 </div>
             </div>
@@ -154,7 +154,7 @@
                         window.location.reload();
                     } catch (error) {
                         window.dispatchEvent(new CustomEvent('app-toast', {
-                            detail: { type: 'error', message: 'تعذر تحديث حالة المهمة الآن.' },
+                            detail: { type: 'error', message: @json(__('Unable to update task status right now.')) },
                         }));
                     } finally {
                         button.disabled = false;
@@ -181,7 +181,7 @@
                         const payload = await response.json();
 
                         if (!response.ok || !payload.success) {
-                            throw new Error(payload.message || 'تعذر تنفيذ العملية.');
+                            throw new Error(payload.message || @json(__('Unable to complete the operation.')));
                         }
 
                         window.dispatchEvent(new CustomEvent('app-toast', {
@@ -190,7 +190,7 @@
                         window.location.reload();
                     } catch (error) {
                         window.dispatchEvent(new CustomEvent('app-toast', {
-                            detail: { type: 'error', message: error.message || 'تعذر تنفيذ العملية الآن.' },
+                            detail: { type: 'error', message: error.message || @json(__('Unable to complete the operation right now.')) },
                         }));
                     } finally {
                         button.disabled = false;

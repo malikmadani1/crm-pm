@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use App\Support\Duration;
+use App\Support\Labels;
 
 class AuditLog extends Model
 {
@@ -54,51 +55,12 @@ class AuditLog extends Model
 
     public function eventLabel(): string
     {
-        return match ($this->event) {
-            'customer_created' => 'إنشاء عميل',
-            'customer_updated' => 'تحديث عميل',
-            'customer_deleted' => 'حذف عميل',
-            'lead_created' => 'إنشاء عميل محتمل',
-            'lead_updated' => 'تحديث عميل محتمل',
-            'lead_deleted' => 'حذف عميل محتمل',
-            'lead_converted' => 'تحويل عميل محتمل إلى عميل',
-            'deal_created' => 'إنشاء فرصة بيع',
-            'deal_updated' => 'تحديث فرصة بيع',
-            'deal_deleted' => 'حذف فرصة بيع',
-            'deal_stage_updated' => 'تغيير مرحلة فرصة البيع',
-            'project_created' => 'إنشاء مشروع',
-            'project_updated' => 'تحديث مشروع',
-            'project_deleted' => 'حذف مشروع',
-            'task_created' => 'إنشاء مهمة',
-            'task_updated' => 'تحديث مهمة',
-            'task_deleted' => 'حذف مهمة',
-            'status_changed' => 'تغيير حالة المهمة',
-            'comment_added' => 'إضافة تعليق',
-            'time_entry_created' => 'إضافة وقت عمل',
-            'time_entry_updated' => 'تحديث وقت العمل',
-            'time_entry_deleted' => 'حذف وقت العمل',
-            'attendance_checked_in' => 'تسجيل دخول الدوام',
-            'attendance_checked_out' => 'تسجيل خروج الدوام',
-            'role_created' => 'إنشاء دور',
-            'role_updated' => 'تحديث دور',
-            'role_deleted' => 'حذف دور',
-            'user_created' => 'إنشاء مستخدم',
-            'user_updated' => 'تحديث مستخدم',
-            'user_deleted' => 'حذف مستخدم',
-            default => Str::of($this->event)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::auditEvent($this->event);
     }
 
     public function moduleLabel(): string
     {
-        return match ($this->module) {
-            'crm' => 'إدارة العملاء',
-            'tasks' => 'المهام',
-            'projects' => 'المشاريع',
-            'team' => 'الفريق والصلاحيات',
-            'reports' => 'التقارير',
-            default => Str::of($this->module)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::module($this->module);
     }
 
     public function subjectLabel(): ?string
@@ -165,7 +127,7 @@ class AuditLog extends Model
             $newValue = $this->displayValue($key, Arr::get($newValues, $key));
 
             if ($this->isCreateEvent()) {
-                if ($newValue !== null && $newValue !== 'غير متوفر') {
+                if ($newValue !== null && $newValue !== Labels::notAvailable()) {
                     $rows[] = ['field' => $this->fieldLabel($key), 'old' => null, 'new' => $newValue];
                 }
 
@@ -173,7 +135,7 @@ class AuditLog extends Model
             }
 
             if ($this->isDeleteEvent()) {
-                if ($oldValue !== null && $oldValue !== 'غير متوفر') {
+                if ($oldValue !== null && $oldValue !== Labels::notAvailable()) {
                     $rows[] = ['field' => $this->fieldLabel($key), 'old' => $oldValue, 'new' => null];
                 }
 
@@ -205,7 +167,7 @@ class AuditLog extends Model
                 continue;
             }
 
-            $lines[] = $row['field'].': '.($row['old'] ?? 'فارغ').' -> '.($row['new'] ?? 'فارغ');
+            $lines[] = $row['field'].': '.($row['old'] ?? Labels::empty()).' -> '.($row['new'] ?? Labels::empty());
         }
 
         return $lines;
@@ -243,52 +205,7 @@ class AuditLog extends Model
 
     private function fieldLabel(string $key): string
     {
-        return match ($key) {
-            'name' => 'الاسم',
-            'title' => 'العنوان',
-            'phone' => 'الهاتف',
-            'email' => 'البريد الإلكتروني',
-            'company_name' => 'اسم الشركة',
-            'job_title' => 'المسمى الوظيفي',
-            'address' => 'العنوان',
-            'city' => 'المدينة',
-            'country' => 'الدولة',
-            'source' => 'طريقة الوصول',
-            'status' => 'الحالة',
-            'stage' => 'المرحلة',
-            'stage_id' => 'مرحلة البيع',
-            'priority' => 'الأولوية',
-            'description' => 'الوصف',
-            'start_date' => 'تاريخ البدء',
-            'due_date' => 'تاريخ الاستحقاق',
-            'work_date' => 'تاريخ الدوام',
-            'checked_in_at' => 'وقت الدخول',
-            'checked_out_at' => 'وقت الخروج',
-            'worked_minutes' => 'مدة الدوام',
-            'expected_close_date' => 'تاريخ الإغلاق المتوقع',
-            'estimated_hours' => 'الساعات المقدرة',
-            'actual_hours' => 'الساعات الفعلية',
-            'completion_percentage' => 'نسبة الإنجاز',
-            'value' => 'القيمة',
-            'probability' => 'نسبة الإغلاق',
-            'budget' => 'الميزانية',
-            'progress' => 'التقدم',
-            'notes' => 'الملاحظات',
-            'owner_id' => 'المسؤول',
-            'manager_id' => 'مدير المشروع',
-            'customer_id' => 'العميل',
-            'lead_id' => 'العميل المحتمل',
-            'project_id' => 'المشروع',
-            'parent_id' => 'المهمة الأم',
-            'roles' => 'الأدوار',
-            'permissions' => 'الصلاحيات',
-            'members' => 'الأعضاء',
-            'assignees' => 'المكلّفون',
-            'tags' => 'الوسوم',
-            'is_active' => 'نشط',
-            'body' => 'المحتوى',
-            default => Str::of($key)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::field($key);
     }
 
     private function displayValue(string $key, mixed $value): ?string
@@ -307,7 +224,7 @@ class AuditLog extends Model
             'worked_minutes' => Duration::fromMinutes((int) $value),
             'start_date', 'due_date', 'expected_close_date' => (string) $value,
             'checked_in_at', 'checked_out_at' => (string) $value,
-            'is_active' => (bool) $value ? 'نعم' : 'لا',
+            'is_active' => Labels::boolean((bool) $value),
             'roles', 'permissions', 'members', 'assignees', 'tags' => $this->displayCollectionValues($value),
             default => is_array($value) ? $this->displayCollectionValues($value) : trim((string) $value),
         };
@@ -336,52 +253,22 @@ class AuditLog extends Model
             ->values()
             ->all();
 
-        return $items === [] ? 'غير متوفر' : implode('، ', $items);
+        return $items === [] ? Labels::notAvailable() : implode(Labels::separator(), $items);
     }
 
     private function translateStatus(string $value): string
     {
-        return match ($value) {
-            'todo' => 'للعمل',
-            'in_progress' => 'قيد التنفيذ',
-            'review' => 'قيد المراجعة',
-            'done' => 'مكتملة',
-            'open' => 'مفتوحة',
-            'won' => 'رابحة',
-            'lost' => 'خاسرة',
-            'converted' => 'تم تحويلها',
-            'active' => 'نشط',
-            'potential' => 'محتمل',
-            'not_interested' => 'غير مهتم',
-            'completed' => 'مكتمل',
-            'paused' => 'متوقف',
-            'on_hold' => 'قيد الانتظار',
-            default => Str::of($value)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::status($value);
     }
 
     private function translateLeadStage(string $value): string
     {
-        return match ($value) {
-            'new_lead' => 'عميل محتمل جديد',
-            'contacted' => 'تم التواصل',
-            'qualified' => 'مؤهل',
-            'proposal_sent' => 'تم إرسال العرض',
-            'negotiation' => 'تفاوض',
-            'won' => 'رابحة',
-            'lost' => 'خاسرة',
-            default => Str::of($value)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::leadStage($value);
     }
 
     private function translatePriority(string $value): string
     {
-        return match ($value) {
-            'low' => 'منخفضة',
-            'medium' => 'متوسطة',
-            'high' => 'عالية',
-            default => Str::of($value)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::priority($value);
     }
 }
 

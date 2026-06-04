@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="لوحة كانبان" description="انقل العمل بين المراحل مع تصفية سريعة حسب المشروع والمكلّف." />
+        <x-page-header :title="__('Kanban Board')" :description="__('Move work across stages with quick filters by project and assignee.')" />
     </x-slot>
 
     <div
@@ -94,7 +94,7 @@
             class="task-drawer-panel fixed inset-y-0 {{ app()->getLocale() === 'ar' ? 'right-0' : 'left-0' }} z-[250] w-full max-w-[34rem] border-white/10 bg-slate-950 shadow-2xl"
         >
             <div x-show="taskPanelLoading" class="flex h-full items-center justify-center text-sm text-slate-400">
-                جار تحميل المهمة...
+                {{ __('Loading task...') }}
             </div>
 
             <div x-show="! taskPanelLoading" x-ref="taskPanelBody" class="h-full"></div>
@@ -220,7 +220,7 @@
                                 });
 
                                 if (!response.ok) {
-                                    throw new Error('تعذر تحديث حالة المهمة.');
+                                    throw new Error(@json(__('Unable to update task status.')));
                                 }
 
                                 const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
@@ -234,9 +234,9 @@
                                 }
 
                                 await this.openTaskPanel(taskId, fallbackUrl);
-                                this.showToast('تم تحديث حالة المهمة بنجاح.');
+                                this.showToast(@json(__('Task status updated successfully.')));
                             } catch (error) {
-                                this.showToast('تعذر تحديث حالة المهمة الآن.', 'error');
+                                this.showToast(@json(__('Unable to update task status right now.')), 'error');
                             } finally {
                                 button.disabled = false;
                             }
@@ -269,7 +269,7 @@
                                 await this.openTaskPanel(taskId, fallbackUrl);
                                 this.showToast(payload.message);
                             } catch (error) {
-                                this.showToast(error.message || 'تعذر تنفيذ المؤقت الآن.', 'error');
+                                this.showToast(error.message || @json(__('Unable to run the timer right now.')), 'error');
                             } finally {
                                 button.disabled = false;
                             }

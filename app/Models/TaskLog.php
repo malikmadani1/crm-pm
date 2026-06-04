@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Support\Duration;
+use App\Support\Labels;
 
 class TaskLog extends Model
 {
@@ -47,13 +48,7 @@ class TaskLog extends Model
 
     public function titleLabel(): string
     {
-        return match ($this->action) {
-            'task_created' => 'إنشاء المهمة',
-            'task_updated' => 'تحديث المهمة',
-            'status_changed' => 'تغيير الحالة',
-            'comment_added' => 'إضافة تعليق',
-            default => Str::of($this->action)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::auditEvent($this->action);
     }
 
     public function detailLines(): array
@@ -68,7 +63,7 @@ class TaskLog extends Model
             return [(string) __($this->description)];
         }
 
-        return ['لا توجد تفاصيل إضافية.'];
+        return [__('No additional details.')];
     }
 
     private function summarizeChanges(): array
@@ -89,7 +84,7 @@ class TaskLog extends Model
             $newValue = $this->displayValue($key, Arr::get($newValues, $key));
 
             if ($this->action === 'task_created') {
-                if ($newValue !== null && $newValue !== 'لا يوجد') {
+                if ($newValue !== null && $newValue !== Labels::none()) {
                     $lines[] = $this->fieldLabel($key).': '.$newValue;
                 }
 
@@ -100,7 +95,7 @@ class TaskLog extends Model
                 continue;
             }
 
-            $lines[] = $this->fieldLabel($key).': '.($oldValue ?? 'فارغ').' -> '.($newValue ?? 'فارغ');
+            $lines[] = $this->fieldLabel($key).': '.($oldValue ?? Labels::empty()).' -> '.($newValue ?? Labels::empty());
         }
 
         return $lines;
@@ -108,20 +103,7 @@ class TaskLog extends Model
 
     private function fieldLabel(string $key): string
     {
-        return match ($key) {
-            'title' => 'عنوان المهمة',
-            'description' => 'الوصف',
-            'status' => 'الحالة',
-            'priority' => 'الأولوية',
-            'start_date' => 'تاريخ البدء',
-            'due_date' => 'تاريخ الاستحقاق',
-            'estimated_hours' => 'الساعات المقدرة',
-            'actual_hours' => 'الساعات الفعلية',
-            'completion_percentage' => 'نسبة الإنجاز',
-            'assignees' => 'المكلفون',
-            'tags' => 'الوسوم',
-            default => Str::of($key)->replace('_', ' ')->title()->toString(),
-        };
+        return Labels::field($key);
     }
 
     private function displayValue(string $key, mixed $value): ?string
@@ -131,19 +113,8 @@ class TaskLog extends Model
         }
 
         return match ($key) {
-            'status' => match ((string) $value) {
-                'todo' => 'للعمل',
-                'in_progress' => 'قيد التنفيذ',
-                'review' => 'قيد المراجعة',
-                'done' => 'مكتملة',
-                default => (string) $value,
-            },
-            'priority' => match ((string) $value) {
-                'low' => 'منخفضة',
-                'medium' => 'متوسطة',
-                'high' => 'عالية',
-                default => (string) $value,
-            },
+            'status' => Labels::status((string) $value),
+            'priority' => Labels::priority((string) $value),
             'completion_percentage' => (int) $value.'%',
             'estimated_hours', 'actual_hours' => Duration::fromHours((float) $value),
             'assignees', 'tags' => $this->displayRelatedNames($value),
@@ -165,7 +136,7 @@ class TaskLog extends Model
             ->values()
             ->all();
 
-        return $names === [] ? 'لا يوجد' : implode('، ', $names);
+        return $names === [] ? Labels::none() : implode(Labels::separator(), $names);
     }
 }
 

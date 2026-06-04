@@ -4,8 +4,8 @@
     $languageSwitchFlagClass = $languageSwitchLocale === 'en' ? 'fi-gb' : 'fi-sy';
     $languageSwitchFlag = $languageSwitchLocale === 'en' ? '🇬🇧' : '🇸🇾';
     $languageSwitchCode = strtoupper($languageSwitchLocale);
-    $languageSwitchTitle = $isRtl ? 'الإنجليزية' : 'العربية';
-    $languageSwitchLabel = $isRtl ? 'الإنجليزية' : 'العربية';
+    $languageSwitchTitle = $isRtl ? __('English') : __('Arabic');
+    $languageSwitchLabel = $languageSwitchTitle;
     $navSections = [
         __('Overview') => [
             ['label' => 'Dashboard', 'route' => 'dashboard'],
@@ -138,11 +138,11 @@
                                         <div class="text-xs {{ $isRtl ? 'text-right' : 'text-left' }}">
                                             <div class="font-semibold text-white">
                                                 @if($appTodayAttendance?->checked_in_at && ! $appTodayAttendance?->checked_out_at)
-                                                    تم تسجيل الدخول
+                                                    {{ __('Checked in') }}
                                                 @elseif($appTodayAttendance?->checked_out_at)
-                                                    تم تسجيل الخروج
+                                                    {{ __('Checked out') }}
                                                 @else
-                                                    لم يبدأ بعد
+                                                    {{ __('Not started yet') }}
                                                 @endif
                                             </div>
                                             <div class="mt-1 text-slate-400">
@@ -151,7 +151,7 @@
                                                 @elseif($appTodayAttendance?->checked_out_at)
                                                     {{ $appTodayAttendance->checked_in_at?->format('H:i') }} - {{ $appTodayAttendance->checked_out_at?->format('H:i') }}
                                                 @else
-                                                    ابدأ يوم العمل
+                                                    {{ __('Start your work day') }}
                                                 @endif
                                             </div>
                                         </div>
@@ -159,12 +159,12 @@
                                         @if($appTodayAttendance?->checked_in_at && ! $appTodayAttendance?->checked_out_at)
                                             <form method="POST" action="{{ route('attendance.check-out') }}">
                                                 @csrf
-                                                <button class="rounded-2xl bg-rose-500/15 px-3 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25">إنهاء الدوام</button>
+                                                <button class="rounded-2xl bg-rose-500/15 px-3 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25">{{ __('End work') }}</button>
                                             </form>
                                         @else
                                             <form method="POST" action="{{ route('attendance.check-in') }}">
                                                 @csrf
-                                                <button class="rounded-2xl bg-emerald-500/15 px-3 py-2 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/25">بدء الدوام</button>
+                                                <button class="rounded-2xl bg-emerald-500/15 px-3 py-2 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/25">{{ __('Start work') }}</button>
                                             </form>
                                         @endif
                                     </div>

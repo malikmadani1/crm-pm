@@ -1,10 +1,8 @@
 @php
     $isRtl = app()->isLocale('ar');
-    $loginBadge = $isRtl ? 'تسجيل الدخول' : 'Sign in';
-    $loginTitle = $isRtl ? 'أهلًا بعودتك' : 'Welcome back';
-    $loginSubtitle = $isRtl
-        ? 'ادخل إلى مساحة العمل لمتابعة العملاء، المشاريع، والمهام.'
-        : 'Access your workspace to manage customers, projects, and tasks.';
+    $loginBadge = __('Sign in');
+    $loginTitle = __('Welcome back');
+    $loginSubtitle = __('Access your workspace to manage customers, projects, and tasks.');
 @endphp
 
 <x-guest-layout>
@@ -78,10 +76,10 @@
         @if (Route::has('register'))
             <div class="mt-8 border-t border-white/10 pt-8 text-center">
                 <div class="text-sm text-slate-400">
-                    {{ $isRtl ? 'هل تريد إنشاء حساب جديد؟' : 'Need a new account?' }}
+                    {{ __('Need a new account?') }}
                 </div>
                 <a href="{{ route('register') }}" class="btn-secondary mt-3 w-full justify-center py-3.5 text-sm font-semibold">
-                    {{ $isRtl ? 'إنشاء حساب' : __('Create Account') }}
+                    {{ __('Create Account') }}
                 </a>
             </div>
         @endif

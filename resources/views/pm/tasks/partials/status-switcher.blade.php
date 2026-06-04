@@ -1,15 +1,12 @@
 @php
     $compact = $compact ?? false;
-    $statusLabels = [
-        'todo' => 'للعمل',
-        'in_progress' => 'قيد التنفيذ',
-        'review' => 'قيد المراجعة',
-        'done' => 'مكتملة',
-    ];
+    $statusLabels = collect(\App\Models\Task::STATUSES)
+        ->mapWithKeys(fn ($status) => [$status => \App\Support\Labels::status($status)])
+        ->all();
 @endphp
 
 <div class="task-status-switcher {{ $compact ? 'task-status-switcher-compact' : '' }}">
-    <div class="task-status-switcher-title">{{ $compact ? 'تغيير الحالة' : 'تغيير الحالة بسرعة' }}</div>
+    <div class="task-status-switcher-title">{{ $compact ? __('Change status') : __('Quick status change') }}</div>
     <div class="task-status-switcher-grid">
         @foreach(\App\Models\Task::STATUSES as $status)
             <button
