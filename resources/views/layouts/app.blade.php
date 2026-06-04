@@ -4,8 +4,8 @@
     $languageSwitchFlagClass = $languageSwitchLocale === 'en' ? 'fi-gb' : 'fi-sy';
     $languageSwitchFlag = $languageSwitchLocale === 'en' ? '🇬🇧' : '🇸🇾';
     $languageSwitchCode = strtoupper($languageSwitchLocale);
-    $languageSwitchTitle = $isRtl ? __('English') : 'العربية';
-    $languageSwitchLabel = $isRtl ? __('English') : 'العربية';
+    $languageSwitchTitle = $isRtl ? 'الإنجليزية' : 'العربية';
+    $languageSwitchLabel = $isRtl ? 'الإنجليزية' : 'العربية';
     $navSections = [
         __('Overview') => [
             ['label' => 'Dashboard', 'route' => 'dashboard'],
@@ -138,11 +138,11 @@
                                         <div class="text-xs {{ $isRtl ? 'text-right' : 'text-left' }}">
                                             <div class="font-semibold text-white">
                                                 @if($appTodayAttendance?->checked_in_at && ! $appTodayAttendance?->checked_out_at)
-                                                    {{ __('Checked in') }}
+                                                    تم تسجيل الدخول
                                                 @elseif($appTodayAttendance?->checked_out_at)
-                                                    {{ __('Checked out') }}
+                                                    تم تسجيل الخروج
                                                 @else
-                                                    {{ __('Not started') }}
+                                                    لم يبدأ بعد
                                                 @endif
                                             </div>
                                             <div class="mt-1 text-slate-400">
@@ -151,7 +151,7 @@
                                                 @elseif($appTodayAttendance?->checked_out_at)
                                                     {{ $appTodayAttendance->checked_in_at?->format('H:i') }} - {{ $appTodayAttendance->checked_out_at?->format('H:i') }}
                                                 @else
-                                                    {{ __('Start your work day') }}
+                                                    ابدأ يوم العمل
                                                 @endif
                                             </div>
                                         </div>

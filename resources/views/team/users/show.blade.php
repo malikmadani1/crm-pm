@@ -1,17 +1,17 @@
 ﻿<x-app-layout>
     <x-slot name="header">
-        <x-page-header :title="$user->name" description="Profile, responsibilities, workload, and recent activity for this team member.">
+        <x-page-header :title="$user->name" description="الملف الشخصي والمسؤوليات وعبء العمل وآخر النشاطات لهذا المستخدم.">
             @can('update', $user)
                 <a href="{{ route('users.edit', $user) }}" class="btn-secondary">{{ __('Edit') }}</a>
             @endcan
             @can('delete', $user)
                 @if($user->isProtectedSuperAdmin())
                     <span class="rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-300">
-                        {{ __('Protected super admin') }}
+                        المستخدم الإداري المحمي
                     </span>
                 @elseif(auth()->id() === $user->id)
                     <span class="rounded-xl border border-slate-400/20 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-300">
-                        {{ __('Current session') }}
+                        الجلسة الحالية
                     </span>
                 @else
                     <x-delete-action
@@ -40,12 +40,12 @@
                     <div class="flex justify-between"><dt class="text-slate-400">{{ __('Phone') }}</dt><dd>{{ $user->phone ?: __('N/A') }}</dd></div>
                     <div class="flex justify-between"><dt class="text-slate-400">{{ __('Roles') }}</dt><dd>{{ collect($user->role_names)->map(fn ($roleName) => __($roleName))->join(', ') ?: __('N/A') }}</dd></div>
                     <div class="flex justify-between"><dt class="text-slate-400">{{ __('Completed Tasks') }}</dt><dd>{{ $user->completed_tasks_count }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-slate-400">{{ __('Tracked Hours') }}</dt><dd>{{ \App\Support\Duration::fromMinutes($user->timeEntries->sum('minutes')) }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-400">وقت المهام</dt><dd>{{ \App\Support\Duration::fromMinutes($user->timeEntries->sum('minutes')) }}</dd></div>
                 </dl>
             </div>
 
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">{{ __('Recent Activity') }}</h3>
+                <h3 class="text-lg font-semibold text-white">آخر النشاطات</h3>
                 <div class="mt-4 space-y-3">
                     @forelse($recentActivity as $activity)
                         <div class="rounded-2xl bg-white/5 px-4 py-3">
@@ -53,7 +53,7 @@
                             <div class="mt-1 text-xs text-slate-400">{{ $activity->created_at?->diffForHumans() }}</div>
                         </div>
                     @empty
-                        <div class="text-sm text-slate-400">{{ __('No activity logged yet.') }}</div>
+                        <div class="text-sm text-slate-400">لا يوجد نشاط مسجل بعد.</div>
                     @endforelse
                 </div>
             </div>
@@ -61,7 +61,7 @@
 
         <div class="space-y-6">
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">{{ __('Assigned Tasks') }}</h3>
+                <h3 class="text-lg font-semibold text-white">المهام المسندة</h3>
                 <div class="mt-4 space-y-3">
                     @forelse($user->tasks as $task)
                         <a href="{{ route('tasks.show', $task) }}" class="block rounded-2xl bg-white/5 px-4 py-4 hover:bg-white/10">
@@ -72,13 +72,13 @@
                             <div class="mt-1 text-xs text-slate-400">{{ $task->project?->name }}</div>
                         </a>
                     @empty
-                        <div class="text-sm text-slate-400">{{ __('No tasks assigned.') }}</div>
+                        <div class="text-sm text-slate-400">لا توجد مهام مسندة.</div>
                     @endforelse
                 </div>
             </div>
 
             <div class="panel">
-                <h3 class="text-lg font-semibold text-white">{{ __('Project Portfolio') }}</h3>
+                <h3 class="text-lg font-semibold text-white">المشاريع المرتبطة</h3>
                 <div class="mt-4 space-y-3">
                     @forelse($user->projects as $project)
                         <a href="{{ route('projects.show', $project) }}" class="block rounded-2xl bg-white/5 px-4 py-4 hover:bg-white/10">
@@ -91,7 +91,7 @@
                             </div>
                         </a>
                     @empty
-                        <div class="text-sm text-slate-400">{{ __('No project assignments yet.') }}</div>
+                        <div class="text-sm text-slate-400">لا توجد مشاريع مسندة بعد.</div>
                     @endforelse
                 </div>
             </div>

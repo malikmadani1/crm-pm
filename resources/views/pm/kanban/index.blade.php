@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Kanban Board" description="Move work across the delivery flow with quick project and assignee filtering." />
+        <x-page-header title="لوحة كانبان" description="انقل العمل بين المراحل مع تصفية سريعة حسب المشروع والمكلّف." />
     </x-slot>
 
     <div
@@ -94,7 +94,7 @@
             class="task-drawer-panel fixed inset-y-0 {{ app()->getLocale() === 'ar' ? 'right-0' : 'left-0' }} z-[250] w-full max-w-[34rem] border-white/10 bg-slate-950 shadow-2xl"
         >
             <div x-show="taskPanelLoading" class="flex h-full items-center justify-center text-sm text-slate-400">
-                {{ __('Loading task...') }}
+                جار تحميل المهمة...
             </div>
 
             <div x-show="! taskPanelLoading" x-ref="taskPanelBody" class="h-full"></div>
@@ -220,7 +220,7 @@
                                 });
 
                                 if (!response.ok) {
-                                    throw new Error('Unable to update task status.');
+                                    throw new Error('تعذر تحديث حالة المهمة.');
                                 }
 
                                 const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);

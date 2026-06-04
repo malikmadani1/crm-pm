@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Team Members" description="Manage access, activation state, permissions, and operational ownership across the workspace.">
-            <a href="{{ route('users.create') }}" class="btn-primary">{{ __('Add User') }}</a>
+        <x-page-header title="المستخدمون" description="إدارة الوصول وحالة التفعيل والصلاحيات والمسؤوليات التشغيلية داخل المنصة.">
+            <a href="{{ route('users.create') }}" class="btn-primary">إضافة مستخدم</a>
         </x-page-header>
     </x-slot>
 
@@ -60,11 +60,11 @@
                                         @can('delete', $user)
                                             @if($user->isProtectedSuperAdmin())
                                                 <span class="rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-300">
-                                                    {{ __('Protected super admin') }}
+                                                المستخدم الإداري المحمي
                                                 </span>
                                             @elseif(auth()->id() === $user->id)
                                                 <span class="rounded-xl border border-slate-400/20 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-300">
-                                                    {{ __('Current session') }}
+                                                    الجلسة الحالية
                                                 </span>
                                             @else
                                                 <x-delete-action
@@ -84,7 +84,7 @@
 
             {{ $users->links() }}
         @else
-            <x-empty-state title="No users found" message="Create your first team member to start assigning work and permissions." action="Create User" :href="route('users.create')" />
+            <x-empty-state title="لا يوجد مستخدمون" message="أنشئ أول مستخدم للبدء في إسناد العمل والصلاحيات." action="إضافة مستخدم" :href="route('users.create')" />
         @endif
     </div>
 </x-app-layout>

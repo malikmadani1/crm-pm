@@ -114,10 +114,10 @@
             if (toast.title) return toast.title;
 
             const labels = {
-                success: @js(__('Success')),
-                error: @js(__('Error')),
-                warning: @js(__('Warning')),
-                info: @js(__('Info')),
+                success: @js('نجاح'),
+                error: @js('خطأ'),
+                warning: @js('تنبيه'),
+                info: @js('معلومة'),
             };
 
             return labels[toast.type] ?? labels.info;
@@ -152,7 +152,7 @@
                     type="button"
                     class="toast-close rounded-xl px-2 py-1 text-sm transition hover:bg-white/10"
                     @click="dismiss(toast.id)"
-                    aria-label="{{ __('Dismiss notification') }}"
+                    aria-label="إغلاق الإشعار"
                 >
                     &times;
                 </button>
