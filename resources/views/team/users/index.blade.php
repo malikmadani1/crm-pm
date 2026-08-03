@@ -57,23 +57,23 @@
                                                 {{ __('Edit') }}
                                             </a>
                                         @endcan
-                                        @can('delete', $user)
-                                            @if($user->isProtectedSuperAdmin())
-                                                <span class="rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-300">
-                                                    {{ __('Protected admin user') }}
-                                                </span>
-                                            @elseif(auth()->id() === $user->id)
-                                                <span class="rounded-xl border border-slate-400/20 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-300">
-                                                    {{ __('Current session') }}
-                                                </span>
-                                            @else
+                                        @if($user->isProtectedSuperAdmin())
+                                            <span class="rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-300">
+                                                {{ __('Protected admin user') }}
+                                            </span>
+                                        @elseif(auth()->id() === $user->id)
+                                            <span class="rounded-xl border border-slate-400/20 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-300">
+                                                {{ __('Current session') }}
+                                            </span>
+                                        @else
+                                            @can('delete', $user)
                                                 <x-delete-action
                                                     :action="route('users.destroy', $user)"
                                                     :title="__('Delete user')"
                                                     :message="__('Are you sure you want to delete this user?')"
                                                 />
-                                            @endif
-                                        @endcan
+                                            @endcan
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

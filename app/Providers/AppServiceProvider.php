@@ -31,20 +31,33 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view): void {
             $user = auth()->user();
+            $unreadNotificationsCount = 0;
+            $roleOptions = collect();
+            $todayAttendance = null;
+            $activeTaskTimer = null;
+
+            if (! $user) {
+                $view->with('appUnreadNotificationsCount', $unreadNotificationsCount);
+                $view->with('appRoleOptions', $roleOptions);
+                $view->with('appTodayAttendance', $todayAttendance);
+                $view->with('appActiveTaskTimer', $activeTaskTimer);
+
+                return;
+            }
 
             try {
-                $unreadNotificationsCount = $user?->unreadNotifications()->count() ?? 0;
+                $unreadNotificationsCount = $user->unreadNotifications()->count();
                 $roleOptions = Schema::hasTable('roles')
                     ? Role::query()->orderBy('name')->get(['id', 'name', 'slug'])
                     : collect();
-                $todayAttendance = $user && Schema::hasTable('attendance_records')
+                $todayAttendance = Schema::hasTable('attendance_records')
                     ? AttendanceRecord::query()
                         ->where('user_id', $user->id)
                         ->whereDate('work_date', now()->toDateString())
                         ->latest('checked_in_at')
                         ->first()
                     : null;
-                $activeTaskTimer = $user && Schema::hasTable('time_entries')
+                $activeTaskTimer = Schema::hasTable('time_entries')
                     ? TimeEntry::query()
                         ->with('task')
                         ->where('user_id', $user->id)

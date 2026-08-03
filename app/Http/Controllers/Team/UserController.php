@@ -132,8 +132,6 @@ class UserController extends Controller
 
     public function destroy(User $user, AuditLogService $auditLogService)
     {
-        $this->authorize('delete', $user);
-
         if (request()->user()?->is($user)) {
             return back()->with('error', __('You cannot delete the account that is currently signed in.'));
         }
@@ -141,6 +139,8 @@ class UserController extends Controller
         if ($user->isProtectedSuperAdmin()) {
             return back()->with('error', __('You cannot delete this user because it is the protected super admin account.'));
         }
+
+        $this->authorize('delete', $user);
 
         $auditLogService->record(
             module: 'team',

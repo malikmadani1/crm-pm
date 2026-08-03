@@ -6,38 +6,56 @@
     $languageSwitchCode = strtoupper($languageSwitchLocale);
     $languageSwitchTitle = $isRtl ? __('English') : __('Arabic');
     $languageSwitchLabel = $languageSwitchTitle;
+    $currentUser = auth()->user();
     $navSections = [
         __('Overview') => [
-            ['label' => 'Dashboard', 'route' => 'dashboard'],
-            ['label' => 'Notifications', 'route' => 'notifications.index'],
-            ['label' => 'Audit Log', 'route' => 'audit-logs.index'],
+            ['label' => 'Dashboard', 'route' => 'dashboard', 'permission' => 'dashboard.view'],
+            ['label' => 'Notifications', 'route' => 'notifications.index', 'permission' => 'notifications.view'],
+            ['label' => 'Audit Log', 'route' => 'audit-logs.index', 'permission' => 'audit_logs.view'],
         ],
         __('CRM') => [
-            ['label' => 'Customers', 'route' => 'customers.index'],
-            ['label' => 'Leads', 'route' => 'leads.index'],
-            ['label' => 'Deals', 'route' => 'deals.index'],
-            ['label' => 'Pipeline', 'route' => 'deals.pipeline'],
+            ['label' => 'Customers', 'route' => 'customers.index', 'permission' => 'customers.view'],
+            ['label' => 'Leads', 'route' => 'leads.index', 'permission' => 'leads.view'],
+            ['label' => 'Deals', 'route' => 'deals.index', 'permission' => 'deals.view'],
+            ['label' => 'Pipeline', 'route' => 'deals.pipeline', 'permission' => 'deals.pipeline'],
         ],
         __('Projects') => [
-            ['label' => 'Projects', 'route' => 'projects.index'],
-            ['label' => 'Tasks', 'route' => 'tasks.index'],
-            ['label' => 'Kanban Board', 'route' => 'kanban.index'],
+            ['label' => 'Projects', 'route' => 'projects.index', 'permission' => 'projects.view'],
+            ['label' => 'Tasks', 'route' => 'tasks.index', 'permission' => 'tasks.view'],
+            ['label' => 'Kanban Board', 'route' => 'kanban.index', 'permission' => 'tasks.view'],
         ],
         __('Reports') => [
-            ['label' => 'Sales', 'route' => 'reports.sales'],
-            ['label' => 'CRM Reports', 'route' => 'reports.crm'],
-            ['label' => 'Project Reports', 'route' => 'reports.projects'],
-            ['label' => 'Task Reports', 'route' => 'reports.tasks'],
-            ['label' => 'Team Reports', 'route' => 'reports.team'],
-            ['label' => 'Attendance', 'route' => 'attendance.index'],
+            ['label' => 'Sales', 'route' => 'reports.sales', 'permission' => 'reports.view'],
+            ['label' => 'CRM Reports', 'route' => 'reports.crm', 'permission' => 'reports.view'],
+            ['label' => 'Project Reports', 'route' => 'reports.projects', 'permission' => 'reports.view'],
+            ['label' => 'Task Reports', 'route' => 'reports.tasks', 'permission' => 'reports.view'],
+            ['label' => 'Team Reports', 'route' => 'reports.team', 'permission' => 'reports.view'],
+            ['label' => 'Attendance', 'route' => 'attendance.index', 'permission' => 'reports.view'],
         ],
         __('Administration') => [
-            ['label' => 'Users', 'route' => 'users.index'],
-            ['label' => 'Roles', 'route' => 'roles.index'],
-            ['label' => 'Settings', 'route' => 'settings.index'],
+            ['label' => 'Users', 'route' => 'users.index', 'permission' => 'users.view'],
+            ['label' => 'Roles', 'route' => 'roles.index', 'permission' => 'roles.view'],
+            ['label' => 'Settings', 'route' => 'settings.index', 'admin' => true],
             ['label' => 'Profile', 'route' => 'profile.edit'],
         ],
     ];
+    $navSections = collect($navSections)
+        ->map(fn (array $items): array => collect($items)
+            ->filter(function (array $item) use ($currentUser): bool {
+                if (! $currentUser) {
+                    return false;
+                }
+
+                if (($item['admin'] ?? false) && ! $currentUser->isAdmin()) {
+                    return false;
+                }
+
+                return ! isset($item['permission']) || $currentUser->hasPermissionTo($item['permission']);
+            })
+            ->values()
+            ->all())
+        ->filter(fn (array $items): bool => count($items) > 0)
+        ->all();
 @endphp
 
 <!DOCTYPE html>

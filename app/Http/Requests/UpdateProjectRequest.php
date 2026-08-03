@@ -26,7 +26,7 @@ class UpdateProjectRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'start_date' => ['nullable', 'date'],
             'due_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'budget' => ['nullable', 'numeric', 'min:0'],
+            'budget' => ['required', 'numeric', 'min:0'],
             'status' => ['required', Rule::in(Project::STATUSES)],
             'priority' => ['required', Rule::in(Project::PRIORITIES)],
             'member_ids' => ['nullable', 'array'],

@@ -31,6 +31,10 @@ class UserPolicy
 
     public function delete(User $user, User $model): bool
     {
+        if ($model->isProtectedSuperAdmin() || $user->is($model)) {
+            return false;
+        }
+
         return $this->allows($user, 'users.delete');
     }
 
