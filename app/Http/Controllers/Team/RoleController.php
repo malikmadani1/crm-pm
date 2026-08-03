@@ -36,7 +36,7 @@ class RoleController extends Controller
     public function store(StoreRoleRequest $request, AuditLogService $auditLogService)
     {
         $data = $request->validated();
-        $permissionIds = $data['permission_ids'] ?? [];
+        $permissionIds = $this->withRequiredPermissionIds($data['permission_ids'] ?? []);
 
         unset($data['permission_ids']);
 
@@ -82,7 +82,7 @@ class RoleController extends Controller
     {
         $oldValues = $role->load('permissions')->toArray();
         $data = $request->validated();
-        $permissionIds = $data['permission_ids'] ?? [];
+        $permissionIds = $this->withRequiredPermissionIds($data['permission_ids'] ?? []);
 
         unset($data['permission_ids']);
 
@@ -120,5 +120,32 @@ class RoleController extends Controller
         $role->delete();
 
         return redirect()->route('roles.index')->with('success', __('Role deleted successfully.'));
+    }
+
+    private function withRequiredPermissionIds(array $permissionIds): array
+    {
+        $permissions = Permission::query()
+            ->whereIn('id', $permissionIds)
+            ->get(['id', 'slug']);
+
+        $selectedSlugs = $permissions->pluck('slug');
+        $requiredViewSlugs = $selectedSlugs
+            ->filter(fn (string $slug): bool => str_contains($slug, '.') && ! str_ends_with($slug, '.view'))
+            ->map(fn (string $slug): string => str($slug)->before('.')->append('.view')->toString())
+            ->unique()
+            ->values();
+
+        if ($requiredViewSlugs->isEmpty()) {
+            return $permissions->pluck('id')->map(fn ($id) => (int) $id)->all();
+        }
+
+        return Permission::query()
+            ->whereIn('id', $permissions->pluck('id'))
+            ->orWhereIn('slug', $requiredViewSlugs)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
     }
 }

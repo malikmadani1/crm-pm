@@ -4,6 +4,23 @@
     $selectedPermissionIds = collect(old('permission_ids', $role?->permissions->pluck('id')->all() ?? []))
         ->map(fn ($id) => (int) $id)
         ->all();
+
+    $permissionSlugsById = $permissions
+        ->flatten()
+        ->mapWithKeys(fn ($permission) => [(int) $permission->id => $permission->slug]);
+
+    $permissionIdsBySlug = $permissionSlugsById->flip();
+
+    $permissionDependencies = $permissionSlugsById
+        ->filter(fn (string $slug) => str_contains($slug, '.') && ! str_ends_with($slug, '.view'))
+        ->mapWithKeys(function (string $slug, int $id) use ($permissionIdsBySlug) {
+            [$module] = explode('.', $slug, 2);
+            $viewSlug = "{$module}.view";
+
+            return $permissionIdsBySlug->has($viewSlug)
+                ? [$id => (int) $permissionIdsBySlug[$viewSlug]]
+                : [];
+        });
 @endphp
 
 <div class="grid gap-6 lg:grid-cols-[0.65fr_1.35fr]">
@@ -24,7 +41,7 @@
         </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" data-role-permissions-form data-permission-dependencies='@json($permissionDependencies)'>
         <h3 class="text-lg font-semibold text-white">{{ __('Permissions') }}</h3>
 
         <div class="mt-5 space-y-4">
@@ -34,7 +51,15 @@
                     <div class="grid gap-2 md:grid-cols-2">
                         @foreach($items as $permission)
                             <label class="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 text-sm text-slate-200">
-                                <input type="checkbox" name="permission_ids[]" value="{{ $permission->id }}" class="app-checkbox h-4 w-4 rounded" @checked(in_array((int) $permission->id, $selectedPermissionIds, true))>
+                                <input
+                                    type="checkbox"
+                                    name="permission_ids[]"
+                                    value="{{ $permission->id }}"
+                                    class="app-checkbox h-4 w-4 rounded"
+                                    data-permission-checkbox
+                                    data-permission-slug="{{ $permission->slug }}"
+                                    @checked(in_array((int) $permission->id, $selectedPermissionIds, true))
+                                >
                                 <span>{{ __($permission->name) }}</span>
                             </label>
                         @endforeach
@@ -44,3 +69,52 @@
         </div>
     </div>
 </div>
+
+@once
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('[data-role-permissions-form]').forEach((form) => {
+                    const dependencies = JSON.parse(form.dataset.permissionDependencies || '{}');
+                    const checkboxes = new Map(
+                        Array.from(form.querySelectorAll('[data-permission-checkbox]'))
+                            .map((checkbox) => [checkbox.value, checkbox])
+                    );
+
+                    const applyDependency = (checkbox) => {
+                        if (! checkbox.checked || ! dependencies[checkbox.value]) {
+                            return;
+                        }
+
+                        const requiredCheckbox = checkboxes.get(String(dependencies[checkbox.value]));
+
+                        if (requiredCheckbox) {
+                            requiredCheckbox.checked = true;
+                        }
+                    };
+
+                    const keepRequiredPermissions = (checkbox) => {
+                        const isRequiredByCheckedPermission = Object.entries(dependencies).some(([permissionId, requiredId]) => {
+                            const dependentCheckbox = checkboxes.get(permissionId);
+
+                            return String(requiredId) === checkbox.value && dependentCheckbox?.checked;
+                        });
+
+                        if (isRequiredByCheckedPermission) {
+                            checkbox.checked = true;
+                        }
+                    };
+
+                    checkboxes.forEach(applyDependency);
+
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.addEventListener('change', () => {
+                            applyDependency(checkbox);
+                            keepRequiredPermissions(checkbox);
+                        });
+                    });
+                });
+            });
+        </script>
+    @endpush
+@endonce
